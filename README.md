@@ -24,3 +24,30 @@
 - Métricas objetivas por classe
 - Rastreabilidade de erros
 - Melhoria contínua por augmentação dirigida
+
+### Organização dos Dados
+
+Cada pasta de dataset deve conter subpastas correspondentes às seis classes
+clínicas listadas acima. Por exemplo:
+
+```
+dataset_original/
+├── Normal/
+├── Obstrução do Canal/
+├── Otite Média Aguda (OMA)/
+├── Otite Externa Aguda (OEA)/
+├── Otite Média Crônica (OMC)/
+└── Não é uma imagem otoscópica/
+```
+
+`dataset_augmented/` segue a mesma estrutura e armazena as imagens após
+processos de aumento de dados. Já `validacao/` contém o conjunto utilizado para
+avaliar o modelo.
+
+### Executando o Treinamento e a Validação
+
+1. Coloque as imagens nas pastas acima seguindo a estrutura por classes.
+2. Execute `python treinar_modelo.py` para treinar e salvar o modelo em
+   `modelo_teachable/`.
+3. Após o treinamento, rode `python avaliar_modelo.py` para gerar os relatórios
+   em `validacao/` (arquivos CSV e matriz de confusão).
