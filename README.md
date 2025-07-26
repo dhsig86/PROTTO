@@ -68,3 +68,4 @@ Retraining aproveitando os erros mapeados:
 python treinar_modelo.py --dataset dataset_augmented --pesos modelo_teachable/modelo.keras \
     --retrain --output modelo_teachable/modelo_retrain.keras
 ```
+

@@ -1,0 +1,1 @@
+Imagens aumentadas para treinamento.
