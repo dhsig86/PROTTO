@@ -59,6 +59,7 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
       fill.className = "bar-fill";
       fill.style.width = `${(p.probability * 100).toFixed(1)}%`;
       fill.style.backgroundColor = getBarColor(p.probability);
+      fill.textContent = `${(p.probability * 100).toFixed(1)}%`;
 
       bar.appendChild(label);
       bar.appendChild(fill);
