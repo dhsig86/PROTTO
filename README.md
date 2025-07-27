@@ -44,3 +44,17 @@ Este frontend utiliza **TensorFlow.js** e modelos exportados pelo [Teachable Mac
 ## 📁 Estrutura da Página
 
 
+A página principal (`index.html`) é composta por:
+
+- Um campo de upload (`#imageUpload`) para selecionar a imagem otoscópica.
+- A imagem escolhida aparece em `<img id="previewImage">` para confirmação.
+- O contêiner `#label-container` dentro de um card exibe as probabilidades calculadas.
+- Três botões controlam as ações: **Classificar Imagem**, **Imprimir Resultado** e **Reset**.
+
+## ▶️ Como Utilizar
+
+1. Acesse o link acima ou abra `index.html` localmente em um navegador moderno.
+2. Selecione uma imagem no botão de upload e aguarde a prévia aparecer.
+3. Clique em **Classificar Imagem** para que o modelo processe a foto.
+4. Consulte o resultado com as probabilidades no cartão central.
+5. Opcionalmente utilize **Imprimir Resultado** para gerar um PDF/impresso ou **Reset** para limpar a tela.
