@@ -1,5 +1,6 @@
 import os
 import tensorflow as tf
+import tensorflowjs as tfjs
 
 DATASET_DIR = "dataset/augmented"
 MODEL_DIR = "backend_validation"
@@ -39,4 +40,11 @@ model.compile(
 model.fit(train_ds, epochs=EPOCHS)
 
 os.makedirs(MODEL_DIR, exist_ok=True)
-model.save(os.path.join(MODEL_DIR, 'modelo.keras'))
+keras_path = os.path.join(MODEL_DIR, 'modelo.keras')
+model.save(keras_path)
+
+# Converte o modelo salvo para TensorFlow.js
+tfjs_dir = os.path.join('frontend_web', 'model')
+os.makedirs(tfjs_dir, exist_ok=True)
+tfjs.converters.save_keras_model(model, tfjs_dir)
+print(f'Modelo salvo em {keras_path} e convertido para {tfjs_dir}')
