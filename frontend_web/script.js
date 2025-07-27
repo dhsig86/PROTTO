@@ -12,8 +12,9 @@ function handleFile(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  const imgEl = document.getElementById('input-image');
+  const imgEl = document.getElementById('previewImage');
   imgEl.src = URL.createObjectURL(file);
+  imgEl.style.display = 'block';
   loadedImage = imgEl;
 
   imgEl.onload = () => URL.revokeObjectURL(imgEl.src);
@@ -21,7 +22,8 @@ function handleFile(event) {
 
 function resetView() {
   document.getElementById('imageUpload').value = '';
-  document.getElementById('input-image').src = '';
+  document.getElementById('previewImage').src = '';
+  document.getElementById('previewImage').style.display = 'none';
   document.getElementById('label-container').innerHTML = '';
   loadedImage = null;
 }
