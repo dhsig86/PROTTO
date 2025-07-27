@@ -25,29 +25,47 @@
 - Rastreabilidade de erros
 - Melhoria contínua por augmentação dirigida
 
-### Organização dos Dados
+### Instalação
 
-Cada pasta de dataset deve conter subpastas correspondentes às seis classes
-clínicas listadas acima. Por exemplo:
+1. Clone este repositório.
+   ```bash
+   git clone <url-do-repo>
+   cd PROTTO
+   ```
+2. Crie um ambiente virtual e ative-o.
+   ```bash
+   python3 -m venv .venv
+   source .venv/bin/activate
+   ```
+3. Instale as dependências do projeto.
+   ```bash
+   pip install tensorflow pandas scikit-learn pillow matplotlib
+   ```
 
+### Requisitos de Python
+
+- Python >= 3.8
+- `tensorflow`
+- `pandas`
+- `scikit-learn`
+- `pillow`
+- `matplotlib`
+
+### Exemplos de Comandos
+
+Treinamento do modelo:
+```bash
+python treinar_modelo.py --dataset dataset_augmented --output modelo_teachable/modelo.keras
 ```
-dataset_original/
-├── Normal/
-├── Obstrução do Canal/
-├── Otite Média Aguda (OMA)/
-├── Otite Externa Aguda (OEA)/
-├── Otite Média Crônica (OMC)/
-└── Não é uma imagem otoscópica/
+
+Validação do modelo com o script de avaliação:
+```bash
+python avaliar_modelo.py --model modelo_teachable/modelo.keras --dataset validacao --csv resultados.csv
 ```
 
-`dataset_augmented/` segue a mesma estrutura e armazena as imagens após
-processos de aumento de dados. Já `validacao/` contém o conjunto utilizado para
-avaliar o modelo.
+Retraining aproveitando os erros mapeados:
+```bash
+python treinar_modelo.py --dataset dataset_augmented --pesos modelo_teachable/modelo.keras \
+    --retrain --output modelo_teachable/modelo_retrain.keras
+```
 
-### Executando o Treinamento e a Validação
-
-1. Coloque as imagens nas pastas acima seguindo a estrutura por classes.
-2. Execute `python treinar_modelo.py` para treinar e salvar o modelo em
-   `modelo_teachable/`.
-3. Após o treinamento, rode `python avaliar_modelo.py` para gerar os relatórios
-   em `validacao/` (arquivos CSV e matriz de confusão).
