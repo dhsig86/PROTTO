@@ -25,6 +25,14 @@
 - Rastreabilidade de erros
 - Melhoria contínua por augmentação dirigida
 
+### Dependências
+
+Para treinar e converter o modelo é necessário ter instalados:
+
+```
+pip install tensorflow tensorflowjs
+```
+
 ### Organização dos Dados
 
 Cada pasta de dataset deve conter subpastas correspondentes às seis classes
@@ -50,7 +58,8 @@ Os relatórios finais (CSV de validação e matriz de confusão) são gerados em
 
 1. Coloque as imagens nas pastas acima seguindo a estrutura por classes.
 2. Execute `python treinar_modelo.py` para treinar e salvar o modelo em
-   `backend_validation/`.
+   `backend_validation/`. O script também converte o modelo para o formato
+   TensorFlow.js na pasta `frontend_web/model/`.
 3. Após o treinamento, rode `python avaliar_modelo.py` para gerar os relatórios
    em `docs/` (arquivos CSV e matriz de confusão). O arquivo `predicoes.csv`
    permanece em `backend_validation/` para consulta detalhada.
