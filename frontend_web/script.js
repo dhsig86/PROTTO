@@ -1,10 +1,10 @@
-const MODEL_PATH = './model/';
+const MODEL_URL = 'https://dhsig86.github.io/PROTTO/modelo_teachable/';
 let model;
 let loadedImage = null;
 
 async function loadModel() {
-  const modelURL = MODEL_PATH + 'model.json';
-  const metadataURL = MODEL_PATH + 'metadata.json';
+  const modelURL = MODEL_URL + 'model.json';
+  const metadataURL = MODEL_URL + 'metadata.json';
   model = await tmImage.load(modelURL, metadataURL);
 }
 
@@ -12,7 +12,7 @@ function handleFile(event) {
   const file = event.target.files[0];
   if (!file) return;
 
-  const imgEl = document.getElementById('previewImage');
+  const imgEl = document.getElementById('input-image');
   imgEl.src = URL.createObjectURL(file);
   imgEl.style.display = 'block';
   loadedImage = imgEl;
@@ -22,8 +22,8 @@ function handleFile(event) {
 
 function resetView() {
   document.getElementById('imageUpload').value = '';
-  document.getElementById('previewImage').src = '';
-  document.getElementById('previewImage').style.display = 'none';
+  document.getElementById('input-image').src = '';
+  document.getElementById('input-image').style.display = 'none';
   document.getElementById('label-container').innerHTML = '';
   loadedImage = null;
 }
