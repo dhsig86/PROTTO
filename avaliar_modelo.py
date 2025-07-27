@@ -9,6 +9,11 @@ from sklearn.metrics import classification_report, confusion_matrix
 
 MODEL_DIR = "backend_validation"
 VALID_DIR = "backend_validation"
+DOCS_DIR = "docs"
+
+# Garantir que as pastas existam
+os.makedirs(DOCS_DIR, exist_ok=True)
+os.makedirs(VALID_DIR, exist_ok=True)
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 
@@ -37,7 +42,7 @@ report_dict = classification_report(
     output_dict=True
 )
 report_df = pd.DataFrame(report_dict).transpose()
-report_csv = os.path.join(VALID_DIR, 'relatorio_validacao.csv')
+report_csv = os.path.join(DOCS_DIR, 'relatorio_validacao.csv')
 report_df.to_csv(report_csv)
 
 pred_df = pd.DataFrame({
@@ -54,7 +59,7 @@ sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
 plt.ylabel('Real')
 plt.xlabel('Predito')
 plt.tight_layout()
-plt.savefig(os.path.join(VALID_DIR, 'matriz_confusao.png'))
+plt.savefig(os.path.join(DOCS_DIR, 'matriz_confusao.png'))
 plt.close()
 
-print(f'Relat\u00f3rios salvos em {VALID_DIR}')
+print(f'Relat\u00f3rios salvos em {DOCS_DIR}')

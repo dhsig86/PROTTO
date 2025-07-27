@@ -42,7 +42,9 @@ dataset/original/
 
 `dataset/augmented/` segue a mesma estrutura e armazena as imagens após
 processos de aumento de dados. Já `backend_validation/` contém o conjunto
-utilizado para avaliar o modelo e armazenar os relatórios.
+utilizado para avaliar o modelo e guardar arquivos intermediários.
+Os relatórios finais (CSV de validação e matriz de confusão) são gerados em
+`docs/`.
 
 ### Executando o Treinamento e a Validação
 
@@ -50,7 +52,8 @@ utilizado para avaliar o modelo e armazenar os relatórios.
 2. Execute `python treinar_modelo.py` para treinar e salvar o modelo em
    `backend_validation/`.
 3. Após o treinamento, rode `python avaliar_modelo.py` para gerar os relatórios
-   em `backend_validation/` (arquivos CSV e matriz de confusão).
+   em `docs/` (arquivos CSV e matriz de confusão). O arquivo `predicoes.csv`
+   permanece em `backend_validation/` para consulta detalhada.
 
 ### Web Front-end
 Consulte `frontend_web/README.md` para executar a interface web que carrega o modelo TensorFlow.js e permite classificar imagens diretamente no navegador.
