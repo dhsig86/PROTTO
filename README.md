@@ -20,3 +20,27 @@ on screen.
 Simply open `index.html` in a web browser that supports JavaScript to test the
 classifier locally. Make sure the converted model files are inside the
 `model/` folder so they can be loaded.
+
+# PROTTO · GitHub Pages Deployment
+
+Este repositório é parte do projeto **PROTTO** – um sistema de classificação de imagens otoscópicas com frontend web e validação backend.
+
+Esta branch (`gh-pages`) contém **apenas os arquivos do frontend responsivo** para exibição via [GitHub Pages](https://pages.github.com/).
+
+> 🔗 Acesse: https://dhsig86.github.io/PROTTO/
+
+---
+
+## 🔍 Funcionalidade
+
+Este frontend utiliza **TensorFlow.js** e modelos exportados pelo [Teachable Machine](https://teachablemachine.withgoogle.com/) para:
+
+- Carregar um modelo `.json` otoscópico
+- Classificar uma imagem carregada do usuário (em breve via upload)
+- Exibir as probabilidades de cada classe
+
+---
+
+## 📁 Estrutura da Página
+
+
