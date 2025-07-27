@@ -1,5 +1,5 @@
-const modelURL = "https://dhsig86.github.io/PROTTO/modelo_teachable/model.json";
-const metadataURL = "https://dhsig86.github.io/PROTTO/modelo_teachable/metadata.json";
+const modelURL = "https://dhsig86.github.io/PROTTO/model.json";
+const metadataURL = "https://dhsig86.github.io/PROTTO/metadata.json";
 
 let model;
 let labelContainer = document.getElementById("label-container");
