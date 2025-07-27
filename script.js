@@ -46,7 +46,7 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
     const prediction = await model.predict(previewImage);
     const top3 = prediction.sort((a, b) => b.probability - a.probability).slice(0, 3);
 
-    labelContainer.innerHTML = "<h5 class='mb-3'>Top 3 classes mais prováveis:</h5>";
+    labelContainer.innerHTML = "<h5 class='mb-3'>TOP 3 - DIAGNÓSTICOS</h5>";
     top3.forEach(p => {
       const bar = document.createElement("div");
       bar.className = "probability-bar";
@@ -59,7 +59,8 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
       fill.className = "bar-fill";
       fill.style.width = `${(p.probability * 100).toFixed(1)}%`;
       fill.style.backgroundColor = getBarColor(p.probability);
-      fill.textContent = `${(p.probability * 100).toFixed(1)}%`;
+      // Percentage already displayed in the label above
+      // so we keep the bar fill without text
 
       bar.appendChild(label);
       bar.appendChild(fill);
