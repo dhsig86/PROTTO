@@ -5,6 +5,14 @@ let model;
 let labelContainer = document.getElementById("label-container");
 let previewImage = document.getElementById("previewImage");
 
+// Helper to choose bar color based on probability
+function getBarColor(prob) {
+  if (prob >= 0.75) return "#28a745"; // high confidence - green
+  if (prob >= 0.5) return "#ffc107";  // medium confidence - yellow
+  if (prob >= 0.25) return "#fd7e14"; // low-medium - orange
+  return "#dc3545";                    // low confidence - red
+}
+
 window.onload = async () => {
   try {
     model = await tmImage.load(modelURL, metadataURL);
@@ -40,9 +48,21 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
 
     labelContainer.innerHTML = "<h5 class='mb-3'>Top 3 classes mais prováveis:</h5>";
     top3.forEach(p => {
-      const line = document.createElement("div");
-      line.innerHTML = `<strong title="Confiança do modelo">${p.className}</strong> - ${(p.probability * 100).toFixed(1)}%`;
-      labelContainer.appendChild(line);
+      const bar = document.createElement("div");
+      bar.className = "probability-bar";
+
+      const label = document.createElement("div");
+      label.className = "bar-label";
+      label.textContent = `${p.className} - ${(p.probability * 100).toFixed(1)}%`;
+
+      const fill = document.createElement("div");
+      fill.className = "bar-fill";
+      fill.style.width = `${(p.probability * 100).toFixed(1)}%`;
+      fill.style.backgroundColor = getBarColor(p.probability);
+
+      bar.appendChild(label);
+      bar.appendChild(fill);
+      labelContainer.appendChild(bar);
     });
     document.getElementById("label-container").scrollIntoView({ behavior: "smooth" });
   } catch (error) {
