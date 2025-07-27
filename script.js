@@ -82,13 +82,18 @@ document.getElementById("printerBtn").addEventListener("click", () => {
   const original = document.body.innerHTML;
   const result = labelContainer.innerHTML;
   const image = previewImage.src;
+  const hasPreview = previewImage && previewImage.style.display !== "none" && image && image !== "#";
+
+  const imageSection = hasPreview
+    ? `<div style="text-align:center;margin:1rem 0;">
+         <img src="${image}" style="max-width:260px;margin:auto;border:2px solid #ccc;border-radius:6px;">
+       </div>`
+    : "";
 
   document.body.innerHTML = `
-    <h1 style="text-align:center;">Resultado da Classificação - OTOSCOP-I.A</h1>
-    <div style="text-align:center;">
-      <img src="${image}" style="max-width: 300px; margin: 20px auto; border: 2px solid #aaa; border-radius: 8px;">
-    </div>
-    <div style="margin: 20px; font-size: 1.1rem;">${result}</div>
+    <h1 style="text-align:center;margin-bottom:1rem;">Resultado da Classificação - OTOSCOP-I.A</h1>
+    ${imageSection}
+    <div style="margin:1rem;font-size:1.1rem;">${result}</div>
   `;
   window.print();
   document.body.innerHTML = original;
