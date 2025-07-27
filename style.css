@@ -54,6 +54,12 @@ button {
   min-width: 150px;
 }
 
+button:hover,
+button:focus {
+  filter: brightness(0.95);
+  transform: translateY(-2px);
+}
+
 #classifyBtn {
   font-weight: bold;
   font-size: 1.1rem;
