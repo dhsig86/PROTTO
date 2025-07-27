@@ -7,8 +7,8 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow import keras
 from sklearn.metrics import classification_report, confusion_matrix
 
-MODEL_DIR = "modelo_teachable"
-VALID_DIR = "validacao"
+MODEL_DIR = "backend_validation"
+VALID_DIR = "backend_validation"
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 

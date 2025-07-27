@@ -1,8 +1,8 @@
 import os
 import tensorflow as tf
 
-DATASET_DIR = "dataset_augmented"
-MODEL_DIR = "modelo_teachable"
+DATASET_DIR = "dataset/augmented"
+MODEL_DIR = "backend_validation"
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 32
 EPOCHS = 10

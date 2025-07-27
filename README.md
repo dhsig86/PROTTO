@@ -18,7 +18,7 @@
 - Fase futura: App de revisão com Streamlit
 
 **Pasta principal:**
-- `dataset_original/`, `dataset_augmented/`, `modelo_teachable/`, `validacao/`
+- `dataset/original/`, `dataset/augmented/`, `modelo_teachable/`, `backend_validation/`
 
 **Resultados esperados:**
 - Métricas objetivas por classe
@@ -31,7 +31,7 @@ Cada pasta de dataset deve conter subpastas correspondentes às seis classes
 clínicas listadas acima. Por exemplo:
 
 ```
-dataset_original/
+dataset/original/
 ├── Normal/
 ├── Obstrução do Canal/
 ├── Otite Média Aguda (OMA)/
@@ -40,14 +40,14 @@ dataset_original/
 └── Não é uma imagem otoscópica/
 ```
 
-`dataset_augmented/` segue a mesma estrutura e armazena as imagens após
-processos de aumento de dados. Já `validacao/` contém o conjunto utilizado para
-avaliar o modelo.
+`dataset/augmented/` segue a mesma estrutura e armazena as imagens após
+processos de aumento de dados. Já `backend_validation/` contém o conjunto
+utilizado para avaliar o modelo e armazenar os relatórios.
 
 ### Executando o Treinamento e a Validação
 
 1. Coloque as imagens nas pastas acima seguindo a estrutura por classes.
 2. Execute `python treinar_modelo.py` para treinar e salvar o modelo em
-   `modelo_teachable/`.
+   `backend_validation/`.
 3. Após o treinamento, rode `python avaliar_modelo.py` para gerar os relatórios
-   em `validacao/` (arquivos CSV e matriz de confusão).
+   em `backend_validation/` (arquivos CSV e matriz de confusão).
