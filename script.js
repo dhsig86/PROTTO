@@ -41,9 +41,10 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
     labelContainer.innerHTML = "<h5 class='mb-3'>Top 3 classes mais prováveis:</h5>";
     top3.forEach(p => {
       const line = document.createElement("div");
-      line.innerHTML = `<strong>${p.className}</strong>: ${(p.probability * 100).toFixed(2)}%`;
+      line.innerHTML = `<strong title="Confiança do modelo">${p.className}</strong> - ${(p.probability * 100).toFixed(1)}%`;
       labelContainer.appendChild(line);
     });
+    document.getElementById("label-container").scrollIntoView({ behavior: "smooth" });
   } catch (error) {
     labelContainer.innerHTML = "<p>Erro ao classificar a imagem.</p>";
     console.error("Erro ao classificar:", error);
@@ -60,7 +61,15 @@ document.getElementById("resetBtn").addEventListener("click", () => {
 document.getElementById("printerBtn").addEventListener("click", () => {
   const original = document.body.innerHTML;
   const result = labelContainer.innerHTML;
-  document.body.innerHTML = `<h1>Resultado da Classificação</h1><div>${result}</div>`;
+  const image = previewImage.src;
+
+  document.body.innerHTML = `
+    <h1 style="text-align:center;">Resultado da Classificação - OTOSCOP-I.A</h1>
+    <div style="text-align:center;">
+      <img src="${image}" style="max-width: 300px; margin: 20px auto; border: 2px solid #aaa; border-radius: 8px;">
+    </div>
+    <div style="margin: 20px; font-size: 1.1rem;">${result}</div>
+  `;
   window.print();
   document.body.innerHTML = original;
   location.reload();
