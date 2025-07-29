@@ -1,0 +1,7 @@
+# Impede envio acidental de datasets ou arquivos de treino
+/dataset/
+/PROTTOAUGMENTED/
+/PROTTODATA/
+/*.h5
+/.venv
+/.env
