@@ -107,23 +107,27 @@ document.getElementById("export-feedback").addEventListener("click", () => {
     return;
   }
 
-  const feedbackData = {
+  const filename = `feedback_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
+
+  window.lastFeedback = {
     data: new Date().toISOString(),
     classificacao_top1: top1Prediction,
     correcao_usuario: correcao,
-    imagem_base64: base64Image
+    imagem_base64: base64Image,
+    nome_arquivo: filename
   };
 
-  const blob = new Blob([JSON.stringify(feedbackData, null, 2)], { type: "application/json" });
+  const blob = new Blob([JSON.stringify(window.lastFeedback, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
 
   const a = document.createElement("a");
   a.href = url;
-  a.download = `feedback_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "_")}.json`;
+  a.download = filename;
   a.click();
 
   URL.revokeObjectURL(url);
 });
+
 
 document.getElementById("resetBtn").addEventListener("click", () => {
   previewImage.src = "#";
@@ -164,4 +168,50 @@ function getBarColor(prob) {
   if (prob >= 0.5) return "#ffc107";
   if (prob >= 0.25) return "#fd7e14";
   return "#dc3545";
+
+  
 }
+// Botão: Baixar novamente o JSON
+document.getElementById("btnDownloadJSON").addEventListener("click", () => {
+  if (!window.lastFeedback) {
+    alert("Gere e corrija um feedback primeiro.");
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(window.lastFeedback, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = window.lastFeedback.nome_arquivo || "feedback_protto.json";
+  a.click();
+});
+
+// Botão: Enviar por e-mail
+document.getElementById("btnEmailJSON").addEventListener("click", () => {
+  if (!window.lastFeedback) {
+    alert("Gere e corrija um feedback primeiro.");
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(window.lastFeedback, null, 2)], { type: "application/json" });
+  const filename = window.lastFeedback.nome_arquivo || "feedback_protto.json";
+  const file = new File([blob], filename, { type: "application/json" });
+
+  const subject = encodeURIComponent("PROTTO TEST");
+  const body = encodeURIComponent(`Segue em anexo o feedback gerado pelo sistema OTOSCOP-I.A.\n\nArquivo: ${filename}`);
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({
+      title: "PROTTO TEST",
+      text: "Feedback para o classificador otoscópico.",
+      files: [file]
+    }).catch(err => {
+      alert("Erro ao compartilhar via app. Tente o método manual.");
+      window.location.href = `mailto:drdariootorrino@gmail.com?subject=${subject}&body=${body}`;
+    });
+  } else {
+    alert("Seu navegador não suporta envio automático com anexo.\nVocê será redirecionado ao e-mail para envio manual.");
+    window.location.href = `mailto:drdariootorrino@gmail.com?subject=${subject}&body=${body}`;
+  }
+});
+
