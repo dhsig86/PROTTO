@@ -1,51 +1,84 @@
-const URL = "./model/";
-let model, maxPredictions, uploadedImage;
+const MODEL_URL = 'https://dhsig86.github.io/PROTTO/modelo_teachable/';
+let model;
+let loadedImage = null;
 
 async function loadModel() {
-  const modelURL = URL + "model.json";
-  const metadataURL = URL + "metadata.json";
+  const modelURL = MODEL_URL + 'model.json';
+  const metadataURL = MODEL_URL + 'metadata.json';
   model = await tmImage.load(modelURL, metadataURL);
-  maxPredictions = model.getTotalClasses();
+}
+
+function handleFile(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const imgEl = document.getElementById('input-image');
+  imgEl.src = URL.createObjectURL(file);
+  imgEl.style.display = 'block';
+  loadedImage = imgEl;
+
+  imgEl.onload = () => URL.revokeObjectURL(imgEl.src);
+}
+
+function resetView() {
+  document.getElementById('imageUpload').value = '';
+  document.getElementById('input-image').src = '';
+  document.getElementById('input-image').style.display = 'none';
+  document.getElementById('label-container').innerHTML = '';
+  loadedImage = null;
+}
+
+function printResults() {
+  const result = document.getElementById('label-container').innerHTML;
+  const w = window.open('', '', 'width=600,height=400');
+  w.document.write(`<html><body>${result}</body></html>`);
+  w.document.close();
+  w.focus();
+  w.print();
+  w.close();
+}
+
+async function classifyImage() {
+  if (!loadedImage || !model) return;
+
+  const predictions = await model.predict(loadedImage);
+  predictions.sort((a, b) => b.probability - a.probability);
+  const top3 = predictions.slice(0, 3);
+
+  const container = document.getElementById('label-container');
+  container.innerHTML = '';
+
+  top3.forEach(p => {
+    const percent = (p.probability * 100).toFixed(1);
+    const wrapper = document.createElement('div');
+    wrapper.className = 'mb-2';
+
+    const info = document.createElement('div');
+    info.className = 'd-flex justify-content-between';
+    info.innerHTML = `<span>${p.className}</span><span>${percent}%</span>`;
+
+    const barContainer = document.createElement('div');
+    barContainer.className = 'progress';
+
+    const bar = document.createElement('div');
+    bar.className = 'progress-bar';
+    bar.role = 'progressbar';
+    bar.style.width = `${percent}%`;
+    bar.ariaValuemin = '0';
+    bar.ariaValuemax = '100';
+    bar.innerText = percent + '%';
+
+    barContainer.appendChild(bar);
+    wrapper.appendChild(info);
+    wrapper.appendChild(barContainer);
+    container.appendChild(wrapper);
+  });
 }
 
 window.onload = async () => {
   await loadModel();
-  document.getElementById("imageUpload").addEventListener("change", handleImage, false);
-  document.getElementById("classifyBtn").addEventListener("click", predict);
-  document.getElementById("resetBtn").addEventListener("click", resetInterface);
-  document.getElementById("printerBtn").addEventListener("click", () => window.print());
+  document.getElementById('imageUpload').addEventListener('change', handleFile);
+  document.getElementById('classifyBtn').addEventListener('click', classifyImage);
+  document.getElementById('resetBtn').addEventListener('click', resetView);
+  document.getElementById('printerBtn').addEventListener('click', printResults);
 };
-
-function handleImage(event) {
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const img = document.getElementById("previewImage");
-    img.src = e.target.result;
-    img.style.display = "block";
-    uploadedImage = new Image();
-    uploadedImage.src = e.target.result;
-    uploadedImage.width = 224;
-    uploadedImage.height = 224;
-  };
-  reader.readAsDataURL(event.target.files[0]);
-}
-
-function resetInterface() {
-  document.getElementById("previewImage").style.display = "none";
-  document.getElementById("label-container").innerHTML = "Envie uma imagem para classificar.";
-  document.getElementById("imageUpload").value = "";
-}
-
-async function predict() {
-  if (!uploadedImage) return;
-  const prediction = await model.predict(uploadedImage);
-  prediction.sort((a, b) => b.probability - a.probability);
-  const top = prediction[0];
-  const percent = (top.probability * 100).toFixed(1);
-  const result = `
-    <strong>Classe predita:</strong> ${top.className}<br>
-    <strong>Confiança:</strong> ${percent}%<br>
-    <small>Essa análise é apenas indicativa e não substitui avaliação médica.</small>
-  `;
-  document.getElementById("label-container").innerHTML = result;
-}
