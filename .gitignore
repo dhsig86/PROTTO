@@ -98,3 +98,38 @@ Thumbs.db
 # Local Images files
 /dataset/PROTTOAUGMENTED/
 /dataset/PROTTODATA/
+
+# Backups e temporários de edição
+*.bak
+*.tmp
+*~
+
+# Logs de execução ou debug
+*.log
+
+# Arquivos de cache e execução
+__pycache__/
+*.pyc
+*.pyo
+
+# Dados temporários de avaliação ou retreinamento
+*.csv
+*.json
+*.xlsx
+
+# Feedbacks do usuário
+/dataset/feedback/
+/dataset/metadata/feedback_log.json
+
+# Resultados temporários
+/logs/
+*/log_augmentation.csv
+*/avaliacao_resultados.csv
+*/avaliacao_resultados.json
+
+# Modelos grandes
+/modelo_teachable/*.h5
+/modelo_teachable/*.pb
+
+# Output do tensorflowjs (se usar)
+frontend_web/model_tfjs/
