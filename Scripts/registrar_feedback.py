@@ -50,7 +50,7 @@ for json_file in sorted(INPUT_JSONS.glob("*.json")):
             data = json.load(f)
 
         classe = data["correcao_usuario"]
-        nome_arquivo = data["nome_arquivo"]
+        nome_arquivo = f"feedback_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}.jpg"
         base64_str = data["imagem_base64"]
         data_feedback = data.get("data", datetime.now().isoformat())
 
