@@ -1,22 +1,27 @@
-const modelURL = "https://dhsig86.github.io/PROTTO/model.json";
-const metadataURL = "https://dhsig86.github.io/PROTTO/metadata.json";
+const useLocalModel = false; // Altere para true se quiser usar modelo local
+
+const modelURL = useLocalModel
+  ? "model/model.json"
+  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/model.json";
+
+const metadataURL = useLocalModel
+  ? "model/metadata.json"
+  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/metadata.json";
 
 let model;
-let labelContainer = document.getElementById("label-container");
-let previewImage = document.getElementById("previewImage");
+let top1Prediction = null;
+let base64Image = null;
 
-// Helper to choose bar color based on probability
-function getBarColor(prob) {
-  if (prob >= 0.75) return "#28a745"; // high confidence - green
-  if (prob >= 0.5) return "#ffc107";  // medium confidence - yellow
-  if (prob >= 0.25) return "#fd7e14"; // low-medium - orange
-  return "#dc3545";                    // low confidence - red
-}
+const labelContainer = document.getElementById("label-container");
+const previewImage = document.getElementById("previewImage");
+const feedbackSection = document.getElementById("feedback-section");
+const correctionSection = document.getElementById("correction-section");
+const correctionSelect = document.getElementById("correction-select");
 
 window.onload = async () => {
   try {
     model = await tmImage.load(modelURL, metadataURL);
-    console.log("Modelo carregado com sucesso.");
+    console.log("✅ Modelo carregado com sucesso.");
   } catch (error) {
     labelContainer.innerHTML = "Erro ao carregar o modelo.";
     console.error("Erro ao carregar o modelo:", error);
@@ -31,7 +36,10 @@ document.getElementById("imageUpload").addEventListener("change", function (even
   reader.onload = function (e) {
     previewImage.src = e.target.result;
     previewImage.style.display = "block";
+    base64Image = e.target.result;
     labelContainer.innerHTML = "<p>Imagem carregada. Clique em 'Classificar'.</p>";
+    feedbackSection.style.display = "none";
+    correctionSection.style.display = "none";
   };
   reader.readAsDataURL(file);
 });
@@ -45,6 +53,7 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
   try {
     const prediction = await model.predict(previewImage);
     const top3 = prediction.sort((a, b) => b.probability - a.probability).slice(0, 3);
+    top1Prediction = top3[0]?.className || null;
 
     labelContainer.innerHTML = "<h5 class='mb-3'>TOP 3 - DIAGNÓSTICOS</h5>";
     top3.forEach(p => {
@@ -59,13 +68,16 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
       fill.className = "bar-fill";
       fill.style.width = `${(p.probability * 100).toFixed(1)}%`;
       fill.style.backgroundColor = getBarColor(p.probability);
-      // Percentage already displayed in the label above
-      // so we keep the bar fill without text
 
       bar.appendChild(label);
       bar.appendChild(fill);
       labelContainer.appendChild(bar);
     });
+
+    feedbackSection.style.display = "block";
+    correctionSection.style.display = "none";
+    correctionSelect.value = "";
+
     document.getElementById("label-container").scrollIntoView({ behavior: "smooth" });
   } catch (error) {
     labelContainer.innerHTML = "<p>Erro ao classificar a imagem.</p>";
@@ -73,11 +85,49 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
   }
 });
 
+document.getElementById("feedback-yes").addEventListener("click", () => {
+  correctionSection.style.display = "none";
+  alert("Obrigado! Feedback registrado como correto.");
+});
+
+document.getElementById("feedback-no").addEventListener("click", () => {
+  correctionSection.style.display = "block";
+});
+
+document.getElementById("export-feedback").addEventListener("click", () => {
+  const correcao = correctionSelect.value;
+  if (!correcao) {
+    alert("Selecione uma classe correta antes de exportar.");
+    return;
+  }
+
+  const feedbackData = {
+    data: new Date().toISOString(),
+    classificacao_top1: top1Prediction,
+    correcao_usuario: correcao,
+    imagem_base64: base64Image
+  };
+
+  const blob = new Blob([JSON.stringify(feedbackData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `feedback_${new Date().toISOString().slice(0, 19).replace(/[:T]/g, "_")}.json`;
+  a.click();
+
+  URL.revokeObjectURL(url);
+});
+
 document.getElementById("resetBtn").addEventListener("click", () => {
   previewImage.src = "#";
   previewImage.style.display = "none";
   document.getElementById("imageUpload").value = "";
   labelContainer.innerHTML = "Envie uma imagem para classificar.";
+  feedbackSection.style.display = "none";
+  correctionSection.style.display = "none";
+  top1Prediction = null;
+  base64Image = null;
 });
 
 document.getElementById("printerBtn").addEventListener("click", () => {
@@ -101,3 +151,11 @@ document.getElementById("printerBtn").addEventListener("click", () => {
   document.body.innerHTML = original;
   location.reload();
 });
+
+// Cores das barras
+function getBarColor(prob) {
+  if (prob >= 0.75) return "#28a745";
+  if (prob >= 0.5) return "#ffc107";
+  if (prob >= 0.25) return "#fd7e14";
+  return "#dc3545";
+}
