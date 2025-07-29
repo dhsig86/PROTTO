@@ -1,12 +1,18 @@
-const useLocalModel = false; // Altere para true se quiser usar modelo local
+//const useLocalModel = false; // Altere para true se quiser usar modelo local
 
-const modelURL = useLocalModel
-  ? "model/model.json"
-  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/model.json";
+//const modelURL = useLocalModel
+//  ? "model/model.json"
+//  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/model.json";
 
-const metadataURL = useLocalModel
-  ? "model/metadata.json"
-  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/metadata.json";
+//const metadataURL = useLocalModel
+//  ? "model/metadata.json"
+//  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/metadata.json";//
+
+const useLocalModel = true;
+
+const modelURL = "model.json";
+const metadataURL = "metadata.json";
+
 
 let model;
 let top1Prediction = null;
