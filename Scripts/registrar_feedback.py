@@ -49,7 +49,7 @@ for json_file in sorted(INPUT_JSONS.glob("*.json")):
         with open(json_file, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        classe = data["classe_corrigida"]
+        classe = data["correcao_usuario"]
         nome_arquivo = data["nome_arquivo"]
         base64_str = data["imagem_base64"]
         data_feedback = data.get("data", datetime.now().isoformat())
