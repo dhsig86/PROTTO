@@ -94,3 +94,7 @@ cython_debug/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Local Images files
+/dataset/PROTTOAUGMENTED/
+/dataset/PROTTODATA/

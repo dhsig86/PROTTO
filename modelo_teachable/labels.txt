@@ -1,0 +1,6 @@
+0 Normal
+1 Obstrução
+2 Otite Média Aguda
+3 Otite Externa Aguda
+4 Otite Média Crônica
+5 Não é Imagem Otoscópica
