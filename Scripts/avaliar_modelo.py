@@ -1,3 +1,5 @@
+# avaliar_modelo.py
+
 import os
 import numpy as np
 import pandas as pd
@@ -15,9 +17,17 @@ from datetime import datetime
 
 IMG_SIZE = 224
 BATCH_SIZE = 32
-DATASET_DIR = Path("dataset/PROTTODATA/VALIDATION")
-MODEL_PATH = Path("modelo_teachable/keras_model.h5")
-OUTPUT_DIR = Path("backend_validation/output_evaluation")
+
+# Caminhos compatíveis com sua estrutura atual
+BASE_DIR = Path(__file__).resolve().parent.parent
+DATASET_DIR = BASE_DIR / "dataset" / "PROTTOAUGMENTED" / "VALIDATION"
+# Procura pelo último modelo .keras salvo
+model_files = sorted((BASE_DIR / "modelo_retreinado").glob("*.keras"), key=os.path.getmtime, reverse=True)
+MODEL_PATH = model_files[0]
+
+OUTPUT_DIR = BASE_DIR / "backend_validation" / "output_evaluation"
+
+# Garante que a pasta de saída exista
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
 # -------------------------
@@ -42,7 +52,7 @@ def plot_confusion_matrix(cm, class_names, title='Matriz de Confusão', cmap=plt
 # PIPELINE DE AVALIAÇÃO
 # -------------------------
 
-print("🔍 Carregando modelo:", MODEL_PATH)
+print(f"🔍 Carregando modelo: {MODEL_PATH}")
 model = load_model(MODEL_PATH)
 
 print("🖼️ Preparando imagens de validação...")

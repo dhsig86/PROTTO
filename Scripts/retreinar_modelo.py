@@ -11,48 +11,57 @@ from pathlib import Path
 
 # Diretórios principais
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATASET_DIR = BASE_DIR / "dataset" / "PROTTOAUGMENTED" / "TRAIN"
+AUGMENTED_DIR = BASE_DIR / "dataset" / "PROTTOAUGMENTED" / "TRAIN"
+FEEDBACK_DIR = BASE_DIR / "dataset" / "feedback"
+MERGED_DIR = [AUGMENTED_DIR, FEEDBACK_DIR]
 OUTPUT_DIR = BASE_DIR / "modelo_retreinado"
-MODEL_BASE = BASE_DIR / "converted_keras" / "keras_model.h5"  # Pode ser usado depois se quiser carregar pesos
+MODEL_BASE = BASE_DIR / "converted_keras" / "keras_model.h5"
 
-# Parâmetros gerais
+# Parâmetros
 IMG_SIZE = (224, 224)
 BATCH_SIZE = 16
 NUM_CLASSES = 6
 EPOCHS = 15
 
-# Garantir pasta de saída
+# Garante pasta de saída
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Augmentation leve com divisão treino/validação
-datagen = ImageDataGenerator(
-    rescale=1./255,
-    validation_split=0.2
-)
+# Função para unir diretórios
+def create_combined_generator(subset):
+    datagens = []
+    for folder in MERGED_DIR:
+        if not folder.exists():
+            continue
+        datagen = ImageDataGenerator(
+            rescale=1./255,
+            validation_split=0.2
+        ).flow_from_directory(
+            folder,
+            target_size=IMG_SIZE,
+            batch_size=BATCH_SIZE,
+            class_mode="categorical",
+            subset=subset,
+            shuffle=True
+        )
+        datagens.append(datagen)
+    return tf.data.Dataset.sample_from_datasets(
+        [tf.data.Dataset.from_generator(lambda gen=gen: gen, output_signature=(
+            tf.TensorSpec(shape=(None, *IMG_SIZE, 3), dtype=tf.float32),
+            tf.TensorSpec(shape=(None, NUM_CLASSES), dtype=tf.float32)
+        )) for gen in datagens]
+    ).unbatch().batch(BATCH_SIZE)
 
-train_gen = datagen.flow_from_directory(
-    DATASET_DIR,
-    target_size=IMG_SIZE,
-    batch_size=BATCH_SIZE,
-    class_mode="categorical",
-    subset="training"
-)
+# Dados combinados
+train_ds = create_combined_generator("training")
+val_ds = create_combined_generator("validation")
 
-val_gen = datagen.flow_from_directory(
-    DATASET_DIR,
-    target_size=IMG_SIZE,
-    batch_size=BATCH_SIZE,
-    class_mode="categorical",
-    subset="validation"
-)
-
-# Definição do modelo com hiperparâmetros otimizáveis
+# Modelo otimizado
 def build_model(hp):
     model = keras.Sequential()
     model.add(layers.Input(shape=(IMG_SIZE[0], IMG_SIZE[1], 3)))
 
     for i in range(hp.Int("conv_blocks", 1, 3, default=2)):
-        filters = hp.Choice(f"filters_{i}", values=[32, 64, 128], default=64)
+        filters = hp.Choice(f"filters_{i}", [32, 64, 128], default=64)
         model.add(layers.Conv2D(
             filters, (3, 3), activation="relu", padding="same",
             kernel_regularizer=regularizers.l2(hp.Float("l2", 1e-5, 1e-2, sampling="log", default=1e-4))
@@ -77,7 +86,7 @@ def build_model(hp):
     )
     return model
 
-# Tuner com Otimização Bayesiana
+# Otimização Bayesiana
 tuner = kt.BayesianOptimization(
     build_model,
     objective="val_accuracy",
@@ -86,16 +95,16 @@ tuner = kt.BayesianOptimization(
     project_name="bayesian_retraining"
 )
 
-# Inicia busca de hiperparâmetros
-tuner.search(train_gen, validation_data=val_gen, epochs=EPOCHS, verbose=1)
+# Busca hiperparâmetros
+tuner.search(train_ds, validation_data=val_ds, epochs=EPOCHS, verbose=1)
 
-# Obtém melhor modelo e salva com timestamp
+# Salva melhor modelo
 best_model = tuner.get_best_models(1)[0]
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 model_save_path = OUTPUT_DIR / f"modelo_retreinado_{timestamp}.keras"
 best_model.save(model_save_path)
 
-# Mostra os melhores hiperparâmetros encontrados
+# Mostra os melhores hiperparâmetros
 best_hp = tuner.get_best_hyperparameters(1)[0]
 print("📊 Melhores hiperparâmetros encontrados:")
 for k, v in best_hp.values.items():
