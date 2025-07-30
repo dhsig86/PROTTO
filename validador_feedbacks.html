@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validador de Feedback - OTOSCOP-I.A</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <style>
+    .img-preview {
+      max-width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container py-4">
+    <h1 class="text-center mb-4">Validador de Feedback - OTOSCOP-I.A</h1>
+    <div class="mb-4 text-center">
+      <input type="file" id="imageUploader" multiple accept="image/*" class="form-control">
+    </div>
+    <div id="imageGrid" class="row g-4"></div>
+    <div class="text-center mt-4">
+      <button id="downloadFeedback" class="btn btn-primary">⬇️ Baixar feedbacks.json</button>
+    </div>
+  </div>
+
+  <script>
+    const imageGrid = document.getElementById('imageGrid');
+    const feedbacks = [];
+
+    const CLASSES = [
+      "normal",
+      "obstrucao",
+      "otite_media_aguda",
+      "otite_media_cronica",
+      "otite_externa_aguda",
+      "nao_otoscopica"
+    ];
+
+    document.getElementById('imageUploader').addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      imageGrid.innerHTML = '';
+      feedbacks.length = 0;
+
+      files.forEach((file, index) => {
+        const reader = new FileReader();
+        reader.onload = function (event) {
+          const col = document.createElement('div');
+          col.className = 'col-md-4';
+
+          col.innerHTML = `
+            <div class="card p-2">
+              <img src="${event.target.result}" class="img-preview mb-2" alt="${file.name}">
+              <p class="text-center fw-bold small">${file.name}</p>
+              <div class="text-center mb-2">
+                <label class="form-label fw-semibold">Classificação automática:</label>
+                <select class="form-select auto-select">
+                  <option disabled selected>Escolher classe...</option>
+                  ${CLASSES.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+              </div>
+              <div class="text-center">
+                <button class="btn btn-success me-2 btn-sim">✔ Correto</button>
+                <button class="btn btn-danger btn-nao">✖ Corrigir</button>
+              </div>
+              <div class="mt-2 correction-section" style="display:none;">
+                <select class="form-select correction-select">
+                  <option disabled selected>Escolher classe correta</option>
+                  ${CLASSES.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+              </div>
+            </div>
+          `;
+
+          imageGrid.appendChild(col);
+
+          const btnSim = col.querySelector('.btn-sim');
+          const btnNao = col.querySelector('.btn-nao');
+          const autoSelect = col.querySelector('.auto-select');
+          const correctionDiv = col.querySelector('.correction-section');
+          const correctionSelect = col.querySelector('.correction-select');
+
+          btnSim.addEventListener('click', () => {
+            if (!autoSelect.value || autoSelect.value === "Escolher classe...") {
+              alert("Selecione primeiro a classe predita automática.");
+              return;
+            }
+            feedbacks.push({
+              nome_arquivo: file.name,
+              classificacao_top1: autoSelect.value,
+              correcao_usuario: null
+            });
+            btnSim.disabled = true;
+            btnNao.disabled = true;
+            autoSelect.disabled = true;
+            correctionSelect.disabled = true;
+          });
+
+          btnNao.addEventListener('click', () => {
+            correctionDiv.style.display = 'block';
+          });
+
+          correctionSelect.addEventListener('change', () => {
+            if (!autoSelect.value || autoSelect.value === "Escolher classe...") {
+              alert("Selecione primeiro a classe predita automática.");
+              return;
+            }
+            feedbacks.push({
+              nome_arquivo: file.name,
+              classificacao_top1: autoSelect.value,
+              correcao_usuario: correctionSelect.value
+            });
+            btnSim.disabled = true;
+            btnNao.disabled = true;
+            autoSelect.disabled = true;
+            correctionSelect.disabled = true;
+          });
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    document.getElementById('downloadFeedback').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(feedbacks, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'feedbacks.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>
