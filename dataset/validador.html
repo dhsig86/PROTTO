@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Validador de Modelo Teachable</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.3.0"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8.4/dist/teachablemachine-image.min.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 2rem; background: #f8f9fa; }
+    h1 { color: #2c3e50; }
+    .success { color: green; }
+    .error { color: red; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h1>🧪 Validador de Modelo Teachable Machine</h1>
+
+  <p>Selecione os 3 arquivos exportados:</p>
+  <ul>
+    <li><code>model.json</code></li>
+    <li><code>metadata.json</code></li>
+    <li><code>weights.bin</code></li>
+  </ul>
+
+  <input type="file" id="fileInput" webkitdirectory directory multiple>
+  <button onclick="testarModelo()">Testar Modelo</button>
+
+  <h2 id="resultado"></h2>
+
+  <script>
+    async function testarModelo() {
+      const files = document.getElementById("fileInput").files;
+      const filesMap = {};
+      for (let file of files) {
+        filesMap[file.name] = file;
+      }
+
+      if (!filesMap["model.json"] || !filesMap["metadata.json"] || !filesMap["weights.bin"]) {
+        document.getElementById("resultado").innerHTML = "<span class='error'>❌ Faltam arquivos: certifique-se de ter model.json, metadata.json e weights.bin.</span>";
+        return;
+      }
+
+      const modelBlob = URL.createObjectURL(filesMap["model.json"]);
+      const metadataBlob = URL.createObjectURL(filesMap["metadata.json"]);
+
+      try {
+        const model = await tmImage.load(modelBlob, metadataBlob);
+        const classes = model.getTotalClasses();
+        document.getElementById("resultado").innerHTML = `<span class='success'>✅ Modelo carregado com sucesso.<br>Total de classes: ${classes}</span>`;
+      } catch (err) {
+        document.getElementById("resultado").innerHTML = `<span class='error'>❌ Erro ao carregar o modelo:\n${err}</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

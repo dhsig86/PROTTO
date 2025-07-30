@@ -1,18 +1,8 @@
-//const useLocalModel = false; // Altere para true se quiser usar modelo local
+const useLocalModel = false;  // ✅ Altere para true se quiser usar arquivos locais
 
-//const modelURL = useLocalModel
-//  ? "model/model.json"
-//  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/model.json";
-
-//const metadataURL = useLocalModel
-//  ? "model/metadata.json"
-//  : "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/metadata.json";//
-
-const useLocalModel = true;
-
-const modelURL = "model.json";
-const metadataURL = "metadata.json";
-
+const onlineModelBase = "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/";
+const modelURL = useLocalModel ? "model.json" : `${onlineModelBase}model.json`;
+const metadataURL = useLocalModel ? "metadata.json" : `${onlineModelBase}metadata.json`;
 
 let model;
 let top1Prediction = null;
@@ -29,17 +19,17 @@ window.onload = async () => {
     model = await tmImage.load(modelURL, metadataURL);
     console.log("✅ Modelo carregado com sucesso.");
   } catch (error) {
-    labelContainer.innerHTML = "Erro ao carregar o modelo.";
+    labelContainer.innerHTML = "❌ Erro ao carregar o modelo.";
     console.error("Erro ao carregar o modelo:", error);
   }
 };
 
-document.getElementById("imageUpload").addEventListener("change", function (event) {
+document.getElementById("imageUpload").addEventListener("change", event => {
   const file = event.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
-  reader.onload = function (e) {
+  reader.onload = e => {
     previewImage.src = e.target.result;
     previewImage.style.display = "block";
     base64Image = e.target.result;
@@ -85,15 +75,16 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
     correctionSelect.value = "";
 
     document.getElementById("label-container").scrollIntoView({ behavior: "smooth" });
+
   } catch (error) {
-    labelContainer.innerHTML = "<p>Erro ao classificar a imagem.</p>";
+    labelContainer.innerHTML = "<p>❌ Erro ao classificar a imagem.</p>";
     console.error("Erro ao classificar:", error);
   }
 });
 
 document.getElementById("feedback-yes").addEventListener("click", () => {
   correctionSection.style.display = "none";
-  alert("Obrigado! Feedback registrado como correto.");
+  alert("✅ Obrigado! Feedback registrado como correto.");
 });
 
 document.getElementById("feedback-no").addEventListener("click", () => {
@@ -103,7 +94,7 @@ document.getElementById("feedback-no").addEventListener("click", () => {
 document.getElementById("export-feedback").addEventListener("click", () => {
   const correcao = correctionSelect.value;
   if (!correcao) {
-    alert("Selecione uma classe correta antes de exportar.");
+    alert("❗ Selecione uma classe correta antes de exportar.");
     return;
   }
 
@@ -119,15 +110,12 @@ document.getElementById("export-feedback").addEventListener("click", () => {
 
   const blob = new Blob([JSON.stringify(window.lastFeedback, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
-
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   a.click();
-
   URL.revokeObjectURL(url);
 });
-
 
 document.getElementById("resetBtn").addEventListener("click", () => {
   previewImage.src = "#";
@@ -149,8 +137,7 @@ document.getElementById("printerBtn").addEventListener("click", () => {
   const imageSection = hasPreview
     ? `<div style="text-align:center;margin:1rem 0;">
          <img src="${image}" style="max-width:260px;margin:auto;border:2px solid #ccc;border-radius:6px;">
-       </div>`
-    : "";
+       </div>` : "";
 
   document.body.innerHTML = `
     <h1 style="text-align:center;margin-bottom:1rem;">Resultado da Classificação - OTOSCOP-I.A</h1>
@@ -162,19 +149,9 @@ document.getElementById("printerBtn").addEventListener("click", () => {
   location.reload();
 });
 
-// Cores das barras
-function getBarColor(prob) {
-  if (prob >= 0.75) return "#28a745";
-  if (prob >= 0.5) return "#ffc107";
-  if (prob >= 0.25) return "#fd7e14";
-  return "#dc3545";
-
-  
-}
-// Botão: Baixar novamente o JSON
 document.getElementById("btnDownloadJSON").addEventListener("click", () => {
   if (!window.lastFeedback) {
-    alert("Gere e corrija um feedback primeiro.");
+    alert("❗ Gere e corrija um feedback primeiro.");
     return;
   }
 
@@ -186,10 +163,9 @@ document.getElementById("btnDownloadJSON").addEventListener("click", () => {
   a.click();
 });
 
-// Botão: Enviar por e-mail
 document.getElementById("btnEmailJSON").addEventListener("click", () => {
   if (!window.lastFeedback) {
-    alert("Gere e corrija um feedback primeiro.");
+    alert("❗ Gere e corrija um feedback primeiro.");
     return;
   }
 
@@ -215,3 +191,10 @@ document.getElementById("btnEmailJSON").addEventListener("click", () => {
   }
 });
 
+// Cor da barra com base na probabilidade
+function getBarColor(prob) {
+  if (prob >= 0.75) return "#28a745";  // verde
+  if (prob >= 0.5) return "#ffc107";   // amarelo
+  if (prob >= 0.25) return "#fd7e14";  // laranja
+  return "#dc3545";                    // vermelho
+}
