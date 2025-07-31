@@ -78,13 +78,15 @@ class_weight = dict(enumerate(weights))
 base_model = MobileNetV2(weights='imagenet', include_top=False, input_shape=(IMG_SIZE, IMG_SIZE, 3))
 base_model.trainable = False  # Congela inicialmente
 
-model = models.Sequential([
-    base_model,
-    layers.GlobalAveragePooling2D(),
-    layers.Dropout(0.3),
-    layers.Dense(128, activation='relu'),
-    layers.Dense(len(CLASSES), activation='softmax')
-])
+inputs = tf.keras.Input(shape=(IMG_SIZE, IMG_SIZE, 3))
+x = base_model(inputs, training=False)
+x = layers.GlobalAveragePooling2D()(x)
+x = layers.Dropout(0.3)(x)
+x = layers.Dense(128, activation='relu')(x)
+outputs = layers.Dense(len(CLASSES), activation='softmax')(x)
+
+model = tf.keras.Model(inputs, outputs)
+
 
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_INITIAL),
