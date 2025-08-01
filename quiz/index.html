@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz Otoscópico</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+  <div class="container mt-4" id="game-area">
+    <div class="card">
+      <img id="quiz-image" src="" class="card-img-top" alt="Imagem Otoscópica" />
+      <div class="card-body">
+        <h5 class="card-title">Qual seu diagnóstico?</h5>
+        <div id="options" class="btn-group-vertical w-100"></div>
+        <p id="feedback" class="mt-3"></p>
+        <button class="btn btn-secondary mt-2" onclick="exportarFeedbacks()">📤 Exportar Feedbacks</button>
+      </div>
+    </div>
+  </div>
+  <script src="quiz.js"></script>
+</body>
+</html>
