@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Quiz Otoscópico</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      background-color: #f8f9fa;
+    }
+    .card {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    #quiz-image {
+      object-fit: contain;
+      max-height: 350px;
+      background-color: #000;
+    }
+    #feedback {
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+    .btn-outline-primary {
+      text-transform: capitalize;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4" id="game-area">
+    <div class="card">
+      <img id="quiz-image" src="" class="card-img-top" alt="Imagem Otoscópica" />
+      <div class="card-body">
+        <h5 class="card-title">Qual seu diagnóstico?</h5>
+        <div id="options" class="btn-group-vertical w-100"></div>
+        <p id="feedback" class="mt-3"></p>
+        <button class="btn btn-secondary mt-2" onclick="exportarFeedbacks()">📤 Exportar Feedbacks</button>
+      </div>
+    </div>
+  </div>
+  <script src="quiz.js"></script>
+</body>
+</html>
