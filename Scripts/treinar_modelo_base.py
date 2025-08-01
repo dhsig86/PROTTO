@@ -87,7 +87,6 @@ outputs = layers.Dense(len(CLASSES), activation='softmax')(x)
 
 model = tf.keras.Model(inputs, outputs)
 
-
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=LEARNING_RATE_INITIAL),
     loss='categorical_crossentropy',
@@ -114,7 +113,7 @@ history_1 = model.fit(
 # -------------------------
 # FINE-TUNING: Descongela parte da base
 # -------------------------
-print("\n🧠 Fase 2: Fine-tuning com base parcialmente liberada")
+print("\n🧬 Fase 2: Fine-tuning com base parcialmente liberada")
 
 base_model.trainable = True
 for layer in base_model.layers[:-30]:
@@ -140,10 +139,14 @@ history_2 = model.fit(
 # SALVAR MODELO FINAL + HISTÓRICO
 # -------------------------
 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-model_path = OUTPUT_DIR / f"modelo_base_{timestamp}.keras"
-model.save(model_path)
+model_path_keras = OUTPUT_DIR / f"modelo_base_{timestamp}.keras"
+model_path_h5 = OUTPUT_DIR / f"modelo_base_{timestamp}.h5"
 
-print(f"\n✅ Modelo salvo em: {model_path}")
+# Salvar em ambos formatos
+model.save(model_path_keras)
+model.save(model_path_h5, save_format="h5")
+
+print(f"\n✅ Modelo salvo em: {model_path_keras} e {model_path_h5}")
 
 # Salvar histórico em CSV
 history_df = pd.DataFrame(history_1.history)
