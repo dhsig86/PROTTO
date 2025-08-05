@@ -7,6 +7,11 @@ __pycache__/
 *.so
 
 # Distribution / packaging
+Scripts/
+backend_validation/
+modelo_base/
+dataset/
+
 .Python
 env/
 venv/
