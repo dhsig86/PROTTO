@@ -11,12 +11,12 @@
   <div class="container">
     <h1 class="mt-5 text-center">OTOSCOP-I.A</h1>
 
-    <!-- Upload da Imagem -->
-    <div class="form-group mt-4 text-center">
-      <input type="file" id="imageUpload" accept="image/*" class="form-control form-control-lg">
-      <img id="previewImage" src="#" alt="Prévia da imagem" style="display: none;">
-    </div>
-   <div><a href="quiz/index.html" class="btn btn-outline-primary">🔬 Quiz Diagnóstico </a> </div>
+    <!-- Upload da Imagem e Quiz-->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+  <a href="quiz/index.html" class="btn btn-outline-info">🎯 Ir para o Quiz</a>
+  <input type="file" accept="image/*" onchange="handleImage(event)" class="form-control w-auto" />
+</div>
+
 
     <!-- Resultado da Classificação -->
     <div class="card card-container">
