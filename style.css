@@ -80,7 +80,6 @@ h1, .card-title {
   display: block;
 }
 
-
 /* ---------- CARD GERAL ---------- */
 .card {
   border-radius: 16px;
@@ -102,19 +101,24 @@ h1, .card-title {
   height: 24px;
   display: flex;
   align-items: center;
+  position: relative;
 }
 
 .bar-label {
   font-weight: bold;
-  margin-bottom: 2px;
-  display: block;
-  text-align: left;
+  padding: 0 6px;
+  z-index: 2;
+  position: absolute;
+  left: 0;
+  color: #000;
+  background-color: rgba(255, 255, 255, 0.8);
 }
-
 
 .bar-fill {
   height: 100%;
   transition: width 0.4s ease;
+  z-index: 1;
+  border-radius: 8px;
 }
 
 /* ---------- SINTOMAS CLÍNICOS ---------- */
@@ -160,7 +164,6 @@ button.btn-lg, .btn-lg {
   border-radius: 20px;
   padding: 1.5rem;
 }
-
 
 /* ---------- RESPONSIVIDADE MOBILE ---------- */
 @media (max-width: 576px) {
