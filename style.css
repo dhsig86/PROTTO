@@ -70,12 +70,16 @@ h1, .card-title {
 
 /* ---------- IMAGEM (preview) ---------- */
 #preview {
-  border-radius: 12px;
-  border: 1px solid #dee2e6;
-  max-height: 300px;
-  object-fit: contain;
-  margin-bottom: 1rem;
+  border-radius: 50%;
+  border: 6px solid #343a40;
+  width: 300px;
+  height: 300px;
+  object-fit: cover;
+  box-shadow: 0 0 0 8px #000000cc, inset 0 0 24px #00000099;
+  margin: 0 auto 1rem;
+  display: block;
 }
+
 
 /* ---------- CARD GERAL ---------- */
 .card {
@@ -102,8 +106,11 @@ h1, .card-title {
 
 .bar-label {
   font-weight: bold;
-  padding-left: 10px;
+  margin-bottom: 2px;
+  display: block;
+  text-align: left;
 }
+
 
 .bar-fill {
   height: 100%;
@@ -147,6 +154,13 @@ button.btn-lg, .btn-lg {
   padding: 12px 24px;
   border-radius: 10px;
 }
+
+#resultado-area {
+  background: radial-gradient(circle, #ffffff 60%, #000000 100%);
+  border-radius: 20px;
+  padding: 1.5rem;
+}
+
 
 /* ---------- RESPONSIVIDADE MOBILE ---------- */
 @media (max-width: 576px) {

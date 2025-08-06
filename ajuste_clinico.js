@@ -56,29 +56,32 @@ window.ajustarComSintomas = function (predicoes, sintomasSelecionados) {
     }
   });
 
-  // Aplicar ajustes nas predições
-  const ajustado = predicoes.map(p => {
-    const classeBruta = (p.className || p.classe || "").toLowerCase().trim();
-    const classe = aliases[classeBruta] || classeBruta;
+  // Aplicar ajustes e calcular soma antes da normalização
+let ajustado = predicoes.map(p => {
+  const classeBruta = (p.className || p.classe || "").toLowerCase().trim();
+  const classe = aliases[classeBruta] || classeBruta;
 
-    const original = p.probability || p.original || 0;
-    const delta = ajustes[classe] || 0;
+  const original = p.probability || p.original || 0;
+  const delta = ajustes[classe] || 0;
+  const bruto = Math.max(0, original + delta);
 
-    return {
-      classe,
-      original,
-      ajustado: Math.max(0, Math.min(1, original + delta))
-    };
-  });
+  return { classe, original, bruto };
+});
 
-  // Ordenar por probabilidade ajustada decrescente
-  ajustado.sort((a, b) => b.ajustado - a.ajustado);
+// Normalizar os valores brutos
+const somaBruto = ajustado.reduce((acc, curr) => acc + curr.bruto, 0) || 1;
 
+ajustado = ajustado.map(p => ({
+  classe: p.classe,
+  original: p.original,
+  ajustado: +(p.bruto / somaBruto).toFixed(4) // normalizado e arredondado
+}));
   // DEBUG opcional
-  console.log("📋 Sintomas selecionados:", sintomasSelecionados);
+  console.log("🔧 Sintomas selecionados:", sintomasSelecionados);
   console.log("📊 Predições originais:", predicoes);
   console.log("🔧 Ajustes aplicados:", ajustes);
   console.log("📈 Resultado ajustado:", ajustado);
 
   return ajustado;
-};
+}
+

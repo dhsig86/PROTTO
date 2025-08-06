@@ -176,7 +176,8 @@ function reiniciar() {
   document.getElementById("resultado-area").classList.add("d-none");
   document.getElementById("clinico-container").classList.add("d-none");
   document.getElementById("ajuste-container").classList.add("d-none");
-  document.getElementById("btn-upload").style.display = "d-none";
+  document.getElementById("inicio-upload").classList.remove("d-none");
+  
   top1Prediction = null;
   base64Image = null;
   document.getElementById("ajuste-labels").innerHTML = "";
