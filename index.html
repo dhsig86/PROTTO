@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -7,62 +6,108 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="style.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@teachablemachine/image@0.8/dist/teachablemachine-image.min.js"></script>
 </head>
 <body class="bg-light">
+
   <div class="container py-5">
-    <div class="text-center mb-4">
+    <div class="text-center mb-4 position-relative">
       <h1 class="display-5 fw-bold">Otoscop I.A.</h1>
       <p class="lead text-muted">Classificação automatizada de imagens otoscópicas</p>
       <button class="btn btn-sm btn-outline-secondary rounded-circle" id="btn-ajuda" onclick="mostrarAjuda()" title="Como funciona?">ℹ️</button>
     </div>
 
+    <!-- Upload de Imagem -->
     <div class="d-flex flex-column align-items-center justify-content-center text-center my-4" id="inicio-upload">
-      <label for="imageUpload" class="btn btn-lg btn-primary shadow mb-3" id="btn-upload">
-        📷 Selecionar Imagem Otoscópica
-      </label>
-      <input id="imageUpload" type="file" accept="image/*" onchange="handleImage(event)" class="d-none" />
-
-      <a href="quiz/index.html" class="btn btn-outline-info btn-lg mt-2">
-        🎯 Ir para o Quiz de Diagnóstico
-      </a>
-      <!-- Botão e Modal de Ajuda -->
-<button id="helpBtn">?</button>
-
-<div id="helpModal">
-  <span id="helpModalClose">&times;</span>
-  <p>
-    📌 Este sistema usa inteligência artificial para sugerir possíveis diagnósticos otoscópicos.<br>
-    Envie uma imagem para classificação, revise o resultado e dê seu feedback.<br>
-    Os dados podem ser exportados para melhoria do modelo.
-  </p>
-</div>
-
+      <label for="imageUpload" class="btn btn-lg btn-primary shadow mb-3" id="btn-upload">📷 Selecionar Imagem Otoscópica</label>
+      <input type="file" id="imageUpload" class="form-control" accept="image/*">
+      <button class="btn btn-success btn-lg mt-2" id="classifyBtn">🔍 Classificar Imagem</button>
+      <a href="quiz/index.html" class="btn btn-outline-info btn-lg mt-3">🎯 Ir para o Quiz de Diagnóstico</a>
     </div>
 
+    <!-- Modal de Ajuda -->
+    <div class="modal fade" id="modalAjuda" tabindex="-1" aria-labelledby="modalAjudaLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content shadow">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modalAjudaLabel">ℹ️ Como funciona o sistema?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+          </div>
+          <div class="modal-body">
+            <p>📌 Este sistema usa inteligência artificial para sugerir possíveis diagnósticos otoscópicos.</p>
+            <ul>
+              <li>Envie uma imagem para obter uma classificação automática.</li>
+              <li>Revise o resultado e dê seu feedback (correto ou incorreto).</li>
+              <li>Você pode exportar o feedback para melhorar o modelo.</li>
+              <li>Use o botão "Quiz de Diagnóstico" para treinar sua acurácia.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sintomas Clínicos -->
+    <div id="clinico-container" class="card mt-3 d-none">
+      <div class="card-body">
+        <h5 class="card-title">📋 Sintomas Clínicos</h5>
+        <form id="sintomas-form">
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="exposicao_agua" id="agua"><label class="form-check-label" for="agua">Exposição à água</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="otalgia_tracao" id="tracao"><label class="form-check-label" for="tracao">Otalgia à tração</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="febre" id="febre"><label class="form-check-label" for="febre">Febre</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="plenitude" id="plenitude"><label class="form-check-label" for="plenitude">Plenitude Aural</label></div>
+          <div class="form-check"><input class="form-check-input" type="checkbox" value="hipoacusia" id="hipoacusia"><label class="form-check-label" for="hipoacusia">Hipoacusia</label></div>
+          <button type="button" class="btn btn-warning mt-3" id="ajustarBtn">🔁 Recalcular com dados clínicos</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Resultado Ajustado -->
+    <div id="ajuste-container" class="text-center mt-3 d-none">
+      <h5>Pós-ajuste com dados clínicos:</h5>
+      <div id="ajuste-labels" class="fw-bold"></div>
+      <button class="btn btn-outline-primary mt-2" id="exportAjustadoBtn">📤 Exportar JSON Ajustado</button>
+    </div>
+
+    <!-- Resultado da Classificação -->
     <div class="card shadow d-none" id="resultado-area">
       <img id="preview" src="#" class="card-img-top" alt="Pré-visualização" style="max-height: 300px; object-fit: contain;" />
       <div class="card-body">
         <h5 class="card-title text-center">Resultado da Classificação</h5>
         <div id="label-container" class="text-center fw-bold fs-4 mb-3"></div>
 
-        <div class="text-center mb-2">
+        <!-- Feedback simples -->
+        <div id="feedbackSection" class="text-center mt-3 d-none">
           <p class="fw-bold">Esse resultado está correto?</p>
-          <button class="btn btn-success me-2" onclick="registrarFeedback(true)">✔ Sim</button>
-          <button class="btn btn-danger" onclick="mostrarOpcoesCorrecao()">✖ Não</button>
+          <button class="btn btn-success me-2" id="feedback-yes">✔ Sim</button>
+          <button class="btn btn-danger" id="feedback-no">✖ Não</button>
         </div>
 
-        <div id="correcao-container" class="text-center d-none mt-2">
+        <!-- Correção de classe -->
+        <div id="correctionSection" class="text-center mt-2 d-none">
           <p>Selecione a classe correta:</p>
-          <div id="opcoes-correcao" class="btn-group-vertical"></div>
+          <select id="correctionSelect" class="form-select w-auto d-inline-block">
+            <option value="">Escolher...</option>
+            <option value="normal">Normal</option>
+            <option value="otite_media_aguda">Otite Média Aguda</option>
+            <option value="otite_media_cronica">Otite Média Crônica</option>
+            <option value="otite_externa_aguda">Otite Externa Aguda</option>
+            <option value="obstrucao">Obstrução do Canal</option>
+            <option value="nao_otoscopica">Não é imagem otoscópica</option>
+          </select>
+          <button class="btn btn-outline-primary ms-2" id="exportFeedbackBtn">📤 Exportar Feedback</button>
         </div>
 
-        <div class="text-center mt-3">
+        <!-- Reiniciar -->
+        <div class="text-center mt-4">
           <button class="btn btn-outline-secondary" onclick="reiniciar()">🔁 Nova Imagem</button>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Scripts -->
   <script src="script.js"></script>
+  <script src="ajuste_clinico.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

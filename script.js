@@ -1,4 +1,4 @@
-const useLocalModel = false;  // ✅ Altere para true se quiser usar arquivos locais
+const useLocalModel = false;
 
 const onlineModelBase = "https://teachablemachine.withgoogle.com/models/AyY1FsbFD/";
 const modelURL = useLocalModel ? "model.json" : `${onlineModelBase}model.json`;
@@ -9,11 +9,9 @@ let top1Prediction = null;
 let base64Image = null;
 
 const labelContainer = document.getElementById("label-container");
-const previewImage = document.getElementById("previewImage");
-const feedbackSection = document.getElementById("feedback-section");
-const correctionSection = document.getElementById("correction-section");
-const correctionSelect = document.getElementById("correction-select");
+const preview = document.getElementById("preview");
 
+// Carregar modelo na inicialização
 window.onload = async () => {
   try {
     model = await tmImage.load(modelURL, metadataURL);
@@ -24,30 +22,34 @@ window.onload = async () => {
   }
 };
 
+// Ao carregar imagem
 document.getElementById("imageUpload").addEventListener("change", event => {
   const file = event.target.files[0];
   if (!file) return;
 
   const reader = new FileReader();
   reader.onload = e => {
-    previewImage.src = e.target.result;
-    previewImage.style.display = "block";
+    preview.src = e.target.result;
+    preview.style.display = "block";
     base64Image = e.target.result;
+
     labelContainer.innerHTML = "<p>Imagem carregada. Clique em 'Classificar'.</p>";
-    feedbackSection.style.display = "none";
-    correctionSection.style.display = "none";
+    document.getElementById("feedbackSection").classList.add("d-none");
+    document.getElementById("correctionSection").classList.add("d-none");
+    document.getElementById("resultado-area").classList.remove("d-none");
   };
   reader.readAsDataURL(file);
 });
 
+// Classificar imagem
 document.getElementById("classifyBtn").addEventListener("click", async () => {
-  if (!previewImage.src || previewImage.src === "#") {
+  if (!preview.src || preview.src === "#") {
     labelContainer.innerHTML = "<p>Por favor, envie uma imagem primeiro.</p>";
     return;
   }
 
   try {
-    const prediction = await model.predict(previewImage);
+    const prediction = await model.predict(preview);
     const top3 = prediction.sort((a, b) => b.probability - a.probability).slice(0, 3);
     top1Prediction = top3[0]?.className || null;
 
@@ -70,36 +72,38 @@ document.getElementById("classifyBtn").addEventListener("click", async () => {
       labelContainer.appendChild(bar);
     });
 
-    feedbackSection.style.display = "block";
-    correctionSection.style.display = "none";
-    correctionSelect.value = "";
+    document.getElementById("feedbackSection").classList.remove("d-none");
+    document.getElementById("correctionSection").classList.add("d-none");
+    document.getElementById("correctionSelect").value = "";
+    document.getElementById("clinico-container").classList.remove("d-none");
 
     document.getElementById("label-container").scrollIntoView({ behavior: "smooth" });
-
   } catch (error) {
     labelContainer.innerHTML = "<p>❌ Erro ao classificar a imagem.</p>";
     console.error("Erro ao classificar:", error);
   }
 });
 
+// Feedback positivo
 document.getElementById("feedback-yes").addEventListener("click", () => {
-  correctionSection.style.display = "none";
+  document.getElementById("correctionSection").classList.add("d-none");
   alert("✅ Obrigado! Feedback registrado como correto.");
 });
 
+// Feedback negativo
 document.getElementById("feedback-no").addEventListener("click", () => {
-  correctionSection.style.display = "block";
+  document.getElementById("correctionSection").classList.remove("d-none");
 });
 
-document.getElementById("export-feedback").addEventListener("click", () => {
-  const correcao = correctionSelect.value;
+// Exportar feedback corrigido
+document.getElementById("exportFeedbackBtn").addEventListener("click", () => {
+  const correcao = document.getElementById("correctionSelect").value;
   if (!correcao) {
     alert("❗ Selecione uma classe correta antes de exportar.");
     return;
   }
 
   const filename = `feedback_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
-
   window.lastFeedback = {
     data: new Date().toISOString(),
     classificacao_top1: top1Prediction,
@@ -116,101 +120,67 @@ document.getElementById("export-feedback").addEventListener("click", () => {
   a.click();
   URL.revokeObjectURL(url);
 });
-// Botão de ajuda
-const helpBtn = document.getElementById("helpBtn");
-const helpModal = document.getElementById("helpModal");
-const helpClose = document.getElementById("helpModalClose");
 
-helpBtn.onclick = () => helpModal.style.display = "block";
-helpClose.onclick = () => helpModal.style.display = "none";
-window.onclick = (event) => {
-  if (event.target === helpModal) helpModal.style.display = "none";
-};
-
-// Oculta tudo exceto botões iniciais após reset
-function esconderTudo() {
-  previewImage.style.display = "none";
-  labelContainer.innerHTML = "";
-  feedbackSection.style.display = "none";
-  correctionSection.style.display = "none";
-}
-esconderTudo();
-
-document.getElementById("resetBtn").addEventListener("click", () => {
-  previewImage.src = "#";
-  previewImage.style.display = "none";
-  document.getElementById("imageUpload").value = "";
-  labelContainer.innerHTML = "Envie uma imagem para classificar.";
-  feedbackSection.style.display = "none";
-  correctionSection.style.display = "none";
-  top1Prediction = null;
-  base64Image = null;
-});
-
-document.getElementById("printerBtn").addEventListener("click", () => {
-  const original = document.body.innerHTML;
-  const result = labelContainer.innerHTML;
-  const image = previewImage.src;
-  const hasPreview = previewImage && previewImage.style.display !== "none" && image && image !== "#";
-
-  const imageSection = hasPreview
-    ? `<div style="text-align:center;margin:1rem 0;">
-         <img src="${image}" style="max-width:260px;margin:auto;border:2px solid #ccc;border-radius:6px;">
-       </div>` : "";
-
-  document.body.innerHTML = `
-    <h1 style="text-align:center;margin-bottom:1rem;">Resultado da Classificação - OTOSCOP-I.A</h1>
-    ${imageSection}
-    <div style="margin:1rem;font-size:1.1rem;">${result}</div>
-  `;
-  window.print();
-  document.body.innerHTML = original;
-  location.reload();
-});
-
-document.getElementById("btnDownloadJSON").addEventListener("click", () => {
-  if (!window.lastFeedback) {
-    alert("❗ Gere e corrija um feedback primeiro.");
+// Recalcular com sintomas clínicos
+document.getElementById("ajustarBtn").addEventListener("click", async () => {
+  if (!model || !preview.src || preview.src === "#") {
+    alert("⚠️ Classifique uma imagem primeiro.");
     return;
   }
 
-  const blob = new Blob([JSON.stringify(window.lastFeedback, null, 2)], { type: "application/json" });
+  const predicoes = await model.predict(preview);
+  const sintomasSelecionados = Array.from(document.querySelectorAll("#sintomas-form input:checked")).map(cb => cb.value);
+  const resultadoAjustado = ajustarComSintomas(predicoes, sintomasSelecionados);
+
+  const container = document.getElementById("ajuste-labels");
+  container.innerHTML = "";
+  resultadoAjustado.forEach(p => {
+    const linha = document.createElement("p");
+    linha.innerHTML = `${p.classe} — <strong>${(p.ajustado * 100).toFixed(1)}%</strong>`;
+    container.appendChild(linha);
+  });
+
+  document.getElementById("ajuste-container").classList.remove("d-none");
+});
+
+// Exportar resultado ajustado
+document.getElementById("exportAjustadoBtn").addEventListener("click", () => {
+  const ajustadoTexto = document.getElementById("ajuste-labels").innerText;
+  const filename = `ajuste_clinico_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
+
+  const dados = {
+    data: new Date().toISOString(),
+    imagem_base64: base64Image,
+    resultado_ajustado: ajustadoTexto
+  };
+
+  const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = window.lastFeedback.nome_arquivo || "feedback_protto.json";
+  a.download = filename;
   a.click();
+  URL.revokeObjectURL(url);
 });
 
-document.getElementById("btnEmailJSON").addEventListener("click", () => {
-  if (!window.lastFeedback) {
-    alert("❗ Gere e corrija um feedback primeiro.");
-    return;
-  }
+// Função de reinício
+function reiniciar() {
+  preview.src = "#";
+  preview.style.display = "none";
+  document.getElementById("imageUpload").value = "";
+  labelContainer.innerHTML = "Envie uma imagem para classificar.";
+  document.getElementById("feedbackSection").classList.add("d-none");
+  document.getElementById("correctionSection").classList.add("d-none");
+  document.getElementById("resultado-area").classList.add("d-none");
+  document.getElementById("clinico-container").classList.add("d-none");
+  document.getElementById("ajuste-container").classList.add("d-none");
+  top1Prediction = null;
+  base64Image = null;
+  document.getElementById("ajuste-labels").innerHTML = "";
+  document.querySelectorAll("#sintomas-form input").forEach(cb => cb.checked = false);
+}
 
-  const blob = new Blob([JSON.stringify(window.lastFeedback, null, 2)], { type: "application/json" });
-  const filename = window.lastFeedback.nome_arquivo || "feedback_protto.json";
-  const file = new File([blob], filename, { type: "application/json" });
-
-  const subject = encodeURIComponent("PROTTO TEST");
-  const body = encodeURIComponent(`Segue em anexo o feedback gerado pelo sistema OTOSCOP-I.A.\n\nArquivo: ${filename}`);
-
-  if (navigator.canShare && navigator.canShare({ files: [file] })) {
-    navigator.share({
-      title: "PROTTO TEST",
-      text: "Feedback para o classificador otoscópico.",
-      files: [file]
-    }).catch(err => {
-      alert("Erro ao compartilhar via app. Tente o método manual.");
-      window.location.href = `mailto:drdariootorrino@gmail.com?subject=${subject}&body=${body}`;
-    });
-  } else {
-    alert("Seu navegador não suporta envio automático com anexo.\nVocê será redirecionado ao e-mail para envio manual.");
-    window.location.href = `mailto:drdariootorrino@gmail.com?subject=${subject}&body=${body}`;
-  }
-});
-
-// Cor da barra com base na probabilidade
+// Cores para a barra de probabilidade
 function getBarColor(prob) {
   if (prob >= 0.75) return "#28a745";  // verde
   if (prob >= 0.5) return "#ffc107";   // amarelo
