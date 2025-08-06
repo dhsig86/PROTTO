@@ -17,14 +17,15 @@
     <div class="text-center mb-4 position-relative">
       <h1 class="display-5 fw-bold">Otoscop I.A.</h1>
       <p class="lead text-muted">Classificação automatizada de imagens otoscópicas</p>
-      <button class="btn btn-sm btn-outline-secondary rounded-circle" id="btn-ajuda" onclick="mostrarAjuda()" title="Como funciona?">ℹ️</button>
+      <button class="btn btn-sm btn-outline-secondary rounded-circle" id="btn-ajuda" title="Como funciona?" data-bs-toggle="modal" data-bs-target="#modalAjuda">ℹ️</button>
+
     </div>
 
     <!-- Upload de Imagem -->
     <div class="d-flex flex-column align-items-center justify-content-center text-center my-4" id="inicio-upload">
       <label for="imageUpload" class="btn btn-lg btn-primary shadow mb-3" id="btn-upload">📷 Selecionar Imagem Otoscópica</label>
-      <input type="file" id="imageUpload" class="form-control" accept="image/*">
-      <button class="btn btn-success btn-lg mt-2" id="classifyBtn">🔍 Classificar Imagem</button>
+      <input type="file" id="imageUpload" accept="image/*" style="display:none;">
+      
       <a href="quiz/index.html" class="btn btn-outline-info btn-lg mt-3">🎯 Ir para o Quiz de Diagnóstico</a>
     </div>
 
@@ -102,7 +103,10 @@
 
         <!-- Reiniciar -->
         <div class="text-center mt-4">
-          <button class="btn btn-outline-secondary" onclick="reiniciar()">🔁 Nova Imagem</button>
+          <button class="btn btn-success btn-lg mt-2" id="classifyBtn">🔍 Classificar Imagem</button>
+          <p>Para reiniciar, clique no botão abaixo:</p>
+          <button class="btn btn-outline-secondary" onclick="reiniciar()">🔁 Reset/Nova Imagem</button>
+        
         </div>
       </div>
     </div>

@@ -1,13 +1,25 @@
-/* Estilo base */
+/* ---------- BASE ---------- */
 body {
   font-family: 'Segoe UI', sans-serif;
   background-color: #f8f9fa;
   padding-bottom: 2rem;
+  color: #2c3e50;
 }
 
-/* Botão principal de upload com efeito suave */
+h1, .card-title {
+  color: #2c3e50;
+}
+
+.container {
+  max-width: 960px;
+}
+
+/* ---------- BOTÃO UPLOAD ---------- */
 #btn-upload {
+  font-size: 1.2rem;
+  padding: 12px 24px;
   transition: transform 0.2s ease, background-color 0.3s ease;
+  border-radius: 12px;
 }
 
 #btn-upload:hover {
@@ -16,13 +28,13 @@ body {
   color: white;
 }
 
-/* Botão de ajuda ajustado para responsividade */
+/* ---------- BOTÃO DE AJUDA ---------- */
 #btn-ajuda {
   position: absolute;
   top: 20px;
   right: 30px;
-  font-size: 1.2rem;
-  padding: 0.3rem 0.6rem;
+  font-size: 1.3rem;
+  padding: 0.4rem 0.7rem;
   z-index: 1050;
   border: none;
   background-color: transparent;
@@ -35,57 +47,108 @@ body {
   cursor: pointer;
 }
 
-/* Modal de ajuda */
+/* ---------- MODAL DE AJUDA ---------- */
 #modalAjuda .modal-content {
-  border-radius: 0.5rem;
-  padding: 1rem;
+  border-radius: 1rem;
+  padding: 1.5rem;
   background-color: #ffffff;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
 }
 
 #modalAjuda .modal-title {
   font-weight: bold;
+  font-size: 1.2rem;
 }
 
 #modalAjuda ul {
-  padding-left: 1.2rem;
+  padding-left: 1.4rem;
 }
 
 #modalAjuda li {
   margin-bottom: 0.5rem;
 }
 
-/* Preview da imagem */
+/* ---------- IMAGEM (preview) ---------- */
 #preview {
-  border-radius: 6px;
+  border-radius: 12px;
   border: 1px solid #dee2e6;
   max-height: 300px;
   object-fit: contain;
+  margin-bottom: 1rem;
 }
 
-/* Container do resultado */
+/* ---------- CARD GERAL ---------- */
+.card {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+  margin-top: 2rem;
+}
+
+/* ---------- RESULTADO CLASSIFICAÇÃO ---------- */
 #label-container {
   margin-top: 1rem;
 }
 
-/* Barras de probabilidade (se aplicável ao script.js) */
 .probability-bar {
   margin-bottom: 10px;
   background-color: #e9ecef;
-  border-radius: 4px;
+  border-radius: 8px;
   overflow: hidden;
+  height: 24px;
+  display: flex;
+  align-items: center;
 }
 
 .bar-label {
-  padding: 5px;
-  font-weight: 500;
+  font-weight: bold;
+  padding-left: 10px;
 }
 
 .bar-fill {
-  height: 10px;
-  transition: width 0.3s ease;
+  height: 100%;
+  transition: width 0.4s ease;
 }
 
-/* Correções de responsividade */
+/* ---------- SINTOMAS CLÍNICOS ---------- */
+#clinico-container {
+  margin-top: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 0 0 rgba(0,0,0,0.0);
+  transition: box-shadow 0.2s ease;
+}
+
+#clinico-container:hover {
+  box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- ÁREA DE AJUSTE CLÍNICO ---------- */
+#ajuste-container {
+  margin-top: 1.5rem;
+}
+
+#ajuste-labels p {
+  margin: 0.3rem 0;
+  font-size: 1rem;
+}
+
+/* ---------- FEEDBACK ---------- */
+#feedbackSection, #correctionSection {
+  margin-top: 1.5rem;
+}
+
+#correctionSelect {
+  min-width: 220px;
+}
+
+/* ---------- BOTÕES MAIORES ---------- */
+button.btn-lg, .btn-lg {
+  font-size: 1.2rem;
+  padding: 12px 24px;
+  border-radius: 10px;
+}
+
+/* ---------- RESPONSIVIDADE MOBILE ---------- */
 @media (max-width: 576px) {
   #btn-ajuda {
     top: 10px;
@@ -94,5 +157,32 @@ body {
 
   .modal-dialog {
     margin: 1rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  .card-title {
+    font-size: 1.2rem;
+  }
+
+  .btn-lg {
+    width: 100%;
+    font-size: 1rem;
+    padding: 10px;
+  }
+
+  #preview {
+    max-height: 200px;
+  }
+
+  #correctionSelect {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  #label-container {
+    font-size: 1rem;
   }
 }

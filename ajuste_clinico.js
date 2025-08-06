@@ -3,50 +3,52 @@
 /**
  * Impactos sintomáticos sobre probabilidades das classes.
  * Os valores seguem critérios clínicos observacionais e podem ser ajustados com base em evidência futura.
- * As chaves são sintomas clínicos (em camelCase).
- * Os valores são objetos com impacto positivo (aumentam probabilidade) ou negativo (reduzem).
  */
 
 const impactoSintomas = {
   exposicao_agua: {
-    // História de contato com água: sugere mais otite externa aguda
     otite_externa_aguda: 0.30,
     otite_media_aguda: -0.15
   },
   otalgia_tracao: {
-    // Dor à tração do pavilhão: típico de otite externa
     otite_externa_aguda: 0.25
   },
   febre: {
-    // Febre: mais comum em otite média aguda
     otite_media_aguda: 0.25,
     obstrucao: -0.10
   },
   plenitude: {
-    // Sensação de ouvido tampado: comum em obstrução e otite média
     obstrucao: 0.20,
     otite_media_aguda: 0.10
   },
   hipoacusia: {
-    // Perda auditiva: pode ocorrer em casos crônicos e obstrutivos
     otite_media_cronica: 0.25,
     obstrucao: 0.10
   }
 };
 
 /**
- * Ajusta a probabilidade das predições fornecidas por um modelo de CNN, com base nos sintomas clínicos.
- * @param {Array} predicoes - Array de objetos [{ className: 'classe', probability: 0.7 }]
- * @param {Array} sintomasSelecionados - Lista de sintomas selecionados ['febre', 'otalgia_tracao']
- * @returns {Array} Lista ordenada das classes com os ajustes clínicos aplicados
+ * Ajusta as probabilidades fornecidas por um modelo CNN com base nos sintomas clínicos do paciente.
+ * @param {Array} predicoes - Lista de objetos com className e probability
+ * @param {Array} sintomasSelecionados - Lista de sintomas ['febre', 'otalgia_tracao', ...]
+ * @returns {Array} Lista de objetos com probabilidade original e ajustada
  */
-
 window.ajustarComSintomas = function (predicoes, sintomasSelecionados) {
   const ajustes = {};
 
-  // Acumula o impacto sintomático por classe
+  // Equivalência entre nomes das classes (modelo vs. dicionário clínico)
+  const aliases = {
+    "não é imagem otoscópica": "nao_otoscopica",
+    "otite média aguda": "otite_media_aguda",
+    "otite média crônica": "otite_media_cronica",
+    "otite externa aguda": "otite_externa_aguda",
+    "obstrução": "obstrucao",
+    "normal": "normal"
+  };
+
+  // Acumular ajustes com base nos sintomas
   sintomasSelecionados.forEach(sintoma => {
-    const impacto = impactoSintomas[sintoma];
+    const impacto = impactoSintomas[sintoma.toLowerCase()];
     if (!impacto) return;
 
     for (const [classe, valor] of Object.entries(impacto)) {
@@ -54,10 +56,12 @@ window.ajustarComSintomas = function (predicoes, sintomasSelecionados) {
     }
   });
 
-  // Aplica os ajustes às probabilidades originais (respeitando limite entre 0 e 1)
+  // Aplicar ajustes nas predições
   const ajustado = predicoes.map(p => {
-    const classe = p.className || p.classe;
-    const original = p.probability || p.original;
+    const classeBruta = (p.className || p.classe || "").toLowerCase().trim();
+    const classe = aliases[classeBruta] || classeBruta;
+
+    const original = p.probability || p.original || 0;
     const delta = ajustes[classe] || 0;
 
     return {
@@ -67,8 +71,14 @@ window.ajustarComSintomas = function (predicoes, sintomasSelecionados) {
     };
   });
 
-  // Ordena do maior para o menor valor ajustado
+  // Ordenar por probabilidade ajustada decrescente
   ajustado.sort((a, b) => b.ajustado - a.ajustado);
+
+  // DEBUG opcional
+  console.log("📋 Sintomas selecionados:", sintomasSelecionados);
+  console.log("📊 Predições originais:", predicoes);
+  console.log("🔧 Ajustes aplicados:", ajustes);
+  console.log("📈 Resultado ajustado:", ajustado);
 
   return ajustado;
 };

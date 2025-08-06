@@ -37,6 +37,8 @@ document.getElementById("imageUpload").addEventListener("change", event => {
     document.getElementById("feedbackSection").classList.add("d-none");
     document.getElementById("correctionSection").classList.add("d-none");
     document.getElementById("resultado-area").classList.remove("d-none");
+    document.getElementById("btn-upload").style.display = "none";
+
   };
   reader.readAsDataURL(file);
 });
@@ -174,6 +176,7 @@ function reiniciar() {
   document.getElementById("resultado-area").classList.add("d-none");
   document.getElementById("clinico-container").classList.add("d-none");
   document.getElementById("ajuste-container").classList.add("d-none");
+  document.getElementById("btn-upload").style.display = "d-none";
   top1Prediction = null;
   base64Image = null;
   document.getElementById("ajuste-labels").innerHTML = "";
