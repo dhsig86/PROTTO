@@ -14,6 +14,16 @@ const classifyBtn = document.getElementById("classifyBtn");
 const loadingIndicator = document.getElementById("loadingIndicator");
 const checkboxContainer = document.getElementById("checkbox-container");
 
+const classLabels = {
+  otite_media_aguda: "Otite Média Aguda",
+  otite_media_cronica: "Otite Média Crônica",
+  otite_externa_aguda: "Otite Externa Aguda",
+  obstrucao: "Obstrução",
+  nao_otoscopica: "Não é imagem otoscópica",
+  normal: "Normal"
+};
+
+
 // Gerar dinamicamente os checkboxes com base em impactoSintomas
 const sintomasLabels = {
   exposicao_agua: "Exposição à água",
@@ -109,7 +119,9 @@ classifyBtn.addEventListener("click", async () => {
 
       const label = document.createElement("div");
       label.className = "bar-label";
-      label.textContent = `${p.className} - ${(p.probability * 100).toFixed(1)}%`;
+      const slug = p.className;
+      const friendly = classLabels[slug] || slug;
+      label.textContent = `${friendly} - ${(p.probability * 100).toFixed(1)}%`;
 
       const fill = document.createElement("div");
       fill.className = "bar-fill";
@@ -185,7 +197,9 @@ document.getElementById("ajustarBtn").addEventListener("click", async () => {
   container.innerHTML = "";
   resultadoAjustado.forEach(p => {
     const linha = document.createElement("p");
-    linha.innerHTML = `${p.classe} — <strong>${(p.ajustado * 100).toFixed(1)}%</strong>`;
+    const slug = p.classe;
+    const friendly = classLabels[slug] || slug;
+    linha.innerHTML = `${friendly} — <strong>${(p.ajustado * 100).toFixed(1)}%</strong>`;
     container.appendChild(linha);
   });
 
