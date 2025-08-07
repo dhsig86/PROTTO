@@ -66,6 +66,7 @@
       </div>
     </div>
 
+
     <!-- Resultado Ajustado -->
     <div id="ajuste-container" class="text-center mt-3 d-none">
       <h5>Pós-ajuste com dados clínicos:</h5>
@@ -79,6 +80,21 @@
       <div class="card-body">
         <h5 class="card-title text-center">Resultado da Classificação</h5>
         <div id="label-container" class="text-center fw-bold mb-3"></div>
+
+        <!-- Sintomas Clínicos -->
+        <div id="clinico-container" class="card mt-3 d-none">
+          <div class="card-body">
+            <h5 class="card-title">📋 Sintomas Clínicos</h5>
+            <form id="sintomas-form">
+              <div class="form-check"><input class="form-check-input" type="checkbox" value="exposicao_agua" id="agua"><label class="form-check-label" for="agua">Exposição à água</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" value="otalgia_tracao" id="tracao"><label class="form-check-label" for="tracao">Otalgia à tração</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" value="febre" id="febre"><label class="form-check-label" for="febre">Febre</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" value="plenitude" id="plenitude"><label class="form-check-label" for="plenitude">Plenitude Aural</label></div>
+              <div class="form-check"><input class="form-check-input" type="checkbox" value="hipoacusia" id="hipoacusia"><label class="form-check-label" for="hipoacusia">Hipoacusia</label></div>
+              <button type="button" class="btn btn-warning mt-3" id="ajustarBtn">🔁 Recalcular com dados clínicos</button>
+            </form>
+          </div>
+        </div>
 
         <!-- Feedback simples -->
         <div id="feedbackSection" class="text-center mt-3 d-none">
