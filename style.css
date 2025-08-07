@@ -173,6 +173,12 @@ button.btn-lg, .btn-lg {
   padding: 1.5rem;
 }
 
+/* ---------- BOTÃO RESET ---------- */
+#resetBtn {
+  background-color: #dc3545;
+  color: #fff;
+}
+
 /* ---------- RESPONSIVIDADE MOBILE ---------- */
 @media (max-width: 576px) {
   #btn-ajuda {
