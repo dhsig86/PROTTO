@@ -56,6 +56,7 @@ document.getElementById("imageUpload").addEventListener("change", event => {
     document.getElementById("feedbackSection").classList.add("d-none");
     document.getElementById("correctionSection").classList.add("d-none");
     document.getElementById("clinico-container").classList.add("d-none");
+    document.getElementById("clinico-toggle").classList.add("d-none");
     document.getElementById("resultado-area").classList.remove("d-none");
     document.getElementById("btn-upload").style.display = "none";
     document.getElementById("inicio-upload").classList.add("d-none");
@@ -100,7 +101,8 @@ classifyBtn.addEventListener("click", async () => {
     document.getElementById("feedbackSection").classList.remove("d-none");
     document.getElementById("correctionSection").classList.add("d-none");
     document.getElementById("correctionSelect").value = "";
-    document.getElementById("clinico-container").classList.remove("d-none");
+    document.getElementById("clinico-toggle").classList.remove("d-none");
+    document.getElementById("clinico-container").classList.add("d-none");
 
     document.getElementById("label-container").scrollIntoView({ behavior: "smooth" });
   } catch (error) {
@@ -144,6 +146,20 @@ document.getElementById("exportFeedbackBtn").addEventListener("click", () => {
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+});
+
+// Mostrar/ocultar card clínico
+document.getElementById("toggleClinicoBtn").addEventListener("click", () => {
+  const clinico = document.getElementById("clinico-container");
+  const toggle = document.getElementById("clinico-toggle");
+  const oculto = clinico.classList.contains("d-none");
+  if (oculto) {
+    clinico.classList.remove("d-none");
+    toggle.classList.add("d-none");
+  } else {
+    clinico.classList.add("d-none");
+    toggle.classList.remove("d-none");
+  }
 });
 
 // Recalcular com sintomas clínicos
@@ -210,6 +226,7 @@ function reiniciar() {
   document.getElementById("correctionSection").classList.add("d-none");
   document.getElementById("resultado-area").classList.add("d-none");
   document.getElementById("clinico-container").classList.add("d-none");
+  document.getElementById("clinico-toggle").classList.add("d-none");
   document.getElementById("ajuste-container").classList.add("d-none");
   document.getElementById("inicio-upload").classList.remove("d-none");
   document.getElementById("btn-upload").style.display = "inline-block";
