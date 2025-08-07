@@ -13,7 +13,6 @@ const labelContainer = document.getElementById("label-container");
 const preview = document.getElementById("preview");
 const classifyBtn = document.getElementById("classifyBtn");
 const loadingIndicator = document.getElementById("loadingIndicator");
-const checkboxContainer = document.getElementById("checkbox-container");
 
 const classLabels = {
   otite_media_aguda: "Otite Média Aguda",
@@ -24,43 +23,6 @@ const classLabels = {
   normal: "Normal"
 };
 
-
-// Gerar dinamicamente os checkboxes com base em impactoSintomas
-const sintomasLabels = {
-  exposicao_agua: "Exposição à água",
-  otalgia_tracao: "Otalgia à tração",
-  febre: "Febre",
-  plenitude: "Plenitude Aural",
-  hipoacusia: "Hipoacusia",
-  otalgia: "Otalgia",
-  otorreia: "Otorreia",
-  prurido: "Prurido",
-  inicio_agudo: "Início agudo",
-  duracao_cronica: "Duração crônica",
-  tinnitus: "Tinnitus",
-  vertigem: "Vertigem",
-  tosse: "Tosse"
-};
-
-Object.keys(impactoSintomas).forEach(chave => {
-  const wrapper = document.createElement("div");
-  wrapper.className = "form-check";
-
-  const input = document.createElement("input");
-  input.className = "form-check-input";
-  input.type = "checkbox";
-  input.value = chave;
-  input.id = chave;
-
-  const label = document.createElement("label");
-  label.className = "form-check-label";
-  label.htmlFor = chave;
-  label.textContent = sintomasLabels[chave] || chave;
-
-  wrapper.appendChild(input);
-  wrapper.appendChild(label);
-  checkboxContainer.appendChild(wrapper);
-});
 
 classifyBtn.disabled = true;
 
