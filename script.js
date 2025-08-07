@@ -44,6 +44,7 @@ document.getElementById("imageUpload").addEventListener("change", event => {
     labelContainer.innerHTML = "<p>Imagem carregada. Clique em 'Classificar'.</p>";
     document.getElementById("feedbackSection").classList.add("d-none");
     document.getElementById("correctionSection").classList.add("d-none");
+    document.getElementById("clinico-container").classList.add("d-none");
     document.getElementById("resultado-area").classList.remove("d-none");
     document.getElementById("btn-upload").style.display = "none";
     document.getElementById("inicio-upload").classList.add("d-none");
