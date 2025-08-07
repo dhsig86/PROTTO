@@ -30,17 +30,27 @@
   <script>
     const imageGrid = document.getElementById('imageGrid');
     const feedbacks = [];
+    let CLASSES = [];
 
-    const CLASSES = [
-      "normal",
-      "obstrucao",
-      "otite_media_aguda",
-      "otite_media_cronica",
-      "otite_externa_aguda",
-      "nao_otoscopica"
-    ];
+    async function loadClasses() {
+      try {
+        const response = await fetch('classes.json');
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        CLASSES = await response.json();
+      } catch (error) {
+        console.error('Erro ao carregar classes:', error);
+      }
+    }
+
+    loadClasses();
 
     document.getElementById('imageUploader').addEventListener('change', (e) => {
+      if (!CLASSES.length) {
+        alert('Lista de classes ainda não carregada.');
+        return;
+      }
       const files = Array.from(e.target.files);
       imageGrid.innerHTML = '';
       feedbacks.length = 0;
