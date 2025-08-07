@@ -62,6 +62,34 @@
         <h5 class="card-title text-center">Resultado da Classificação</h5>
         <div id="label-container" class="text-center fw-bold mb-3"></div>
 
+        <!-- Feedback simples -->
+        <div id="feedbackSection" class="text-center mt-3 d-none">
+          <p class="fw-bold">Esse resultado está correto?</p>
+          <button class="btn btn-success me-2" id="feedback-yes">✔ Sim</button>
+          <button class="btn btn-danger" id="feedback-no">✖ Não</button>
+        </div>
+
+        <!-- Correção de classe -->
+        <div id="correctionSection" class="text-center mt-2 d-none">
+          <p>Selecione a classe correta:</p>
+          <select id="correctionSelect" class="form-select w-auto d-inline-block">
+            <option value="">Escolher...</option>
+            <option value="normal">Normal</option>
+            <option value="otite_media_aguda">Otite Média Aguda</option>
+            <option value="otite_media_cronica">Otite Média Crônica</option>
+            <option value="otite_externa_aguda">Otite Externa Aguda</option>
+            <option value="obstrucao">Obstrução do Canal</option>
+            <option value="nao_otoscopica">Não é imagem otoscópica</option>
+          </select>
+          <button class="btn btn-outline-primary ms-2" id="exportFeedbackBtn">📤 Exportar Feedback</button>
+        </div>
+
+        <!-- Pergunta sobre dados clínicos -->
+        <div id="clinico-toggle" class="text-center mt-3 d-none">
+          <p>Deseja incluir dados clínicos?</p>
+          <button class="btn btn-warning" id="toggleClinicoBtn">Adicionar dados clínicos</button>
+        </div>
+
         <!-- Sintomas Clínicos -->
         <div id="clinico-container" class="card mt-3 d-none">
           <div class="card-body">
@@ -131,28 +159,6 @@
           <h5>Pós-ajuste com dados clínicos:</h5>
           <div id="ajuste-labels" class="fw-bold"></div>
           <button class="btn btn-outline-primary mt-2" id="exportAjustadoBtn">📤 Exportar JSON Ajustado</button>
-        </div>
-
-        <!-- Feedback simples -->
-        <div id="feedbackSection" class="text-center mt-3 d-none">
-          <p class="fw-bold">Esse resultado está correto?</p>
-          <button class="btn btn-success me-2" id="feedback-yes">✔ Sim</button>
-          <button class="btn btn-danger" id="feedback-no">✖ Não</button>
-        </div>
-
-        <!-- Correção de classe -->
-        <div id="correctionSection" class="text-center mt-2 d-none">
-          <p>Selecione a classe correta:</p>
-          <select id="correctionSelect" class="form-select w-auto d-inline-block">
-            <option value="">Escolher...</option>
-            <option value="normal">Normal</option>
-            <option value="otite_media_aguda">Otite Média Aguda</option>
-            <option value="otite_media_cronica">Otite Média Crônica</option>
-            <option value="otite_externa_aguda">Otite Externa Aguda</option>
-            <option value="obstrucao">Obstrução do Canal</option>
-            <option value="nao_otoscopica">Não é imagem otoscópica</option>
-          </select>
-          <button class="btn btn-outline-primary ms-2" id="exportFeedbackBtn">📤 Exportar Feedback</button>
         </div>
 
         <!-- Reiniciar -->
