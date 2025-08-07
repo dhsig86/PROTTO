@@ -3,14 +3,7 @@ let currentIndex = 0;
 let cases = [];
 let score = 0;
 
-const labels = [
-  "normal",
-  "otite_media_aguda",
-  "otite_media_cronica",
-  "otite_externa_aguda",
-  "obstrucao",
-  "nao_otoscopica"
-];
+let labels = [];
 
 const labelNames = {
   "normal": "Normal",
@@ -30,8 +23,41 @@ const classeEstilo = {
   "nao_otoscopica": "dark"
 };
 
+const labelEmojis = {
+  "normal": "🟢",
+  "otite_media_aguda": "🔴",
+  "otite_media_cronica": "🟡",
+  "otite_externa_aguda": "🔵",
+  "obstrucao": "⚫",
+  "nao_otoscopica": "⚠️",
+};
+
 // define modo inicial
 let modoSelecionado = "aleatorio";
+
+async function carregarClasses() {
+  try {
+    const response = await fetch("../classes.json");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    labels = await response.json();
+    popularSelecao();
+  } catch (error) {
+    console.error("Erro ao carregar classes:", error);
+  }
+}
+
+function popularSelecao() {
+  const select = document.getElementById("modo-selecao");
+  if (!select) return;
+  labels.forEach(label => {
+    const option = document.createElement("option");
+    option.value = label;
+    option.textContent = `${labelEmojis[label] || ""} ${labelNames[label] || label}`;
+    select.appendChild(option);
+  });
+}
 
 async function loadQuiz() {
   try {
@@ -159,4 +185,7 @@ function modoRevisaoErros() {
   loadCase(currentIndex);
 }
 
-window.onload = loadQuiz;
+window.onload = async () => {
+  await carregarClasses();
+  await loadQuiz();
+};
