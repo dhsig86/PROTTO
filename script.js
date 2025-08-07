@@ -168,6 +168,7 @@ document.getElementById("ajustarBtn").addEventListener("click", async () => {
   });
 
   document.getElementById("ajuste-container").classList.remove("d-none");
+  document.querySelectorAll("#sintomas-form input").forEach(cb => cb.checked = false);
 });
 
 // Exportar resultado ajustado
