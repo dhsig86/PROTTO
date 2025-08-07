@@ -10,15 +10,23 @@ let base64Image = null;
 
 const labelContainer = document.getElementById("label-container");
 const preview = document.getElementById("preview");
+const classifyBtn = document.getElementById("classifyBtn");
+const loadingIndicator = document.getElementById("loadingIndicator");
+
+classifyBtn.disabled = true;
 
 // Carregar modelo na inicialização
 window.onload = async () => {
+  if (loadingIndicator) loadingIndicator.style.display = "block";
   try {
     model = await tmImage.load(modelURL, metadataURL);
     console.log("✅ Modelo carregado com sucesso.");
+    classifyBtn.disabled = false;
   } catch (error) {
     labelContainer.innerHTML = "❌ Erro ao carregar o modelo.";
     console.error("Erro ao carregar o modelo:", error);
+  } finally {
+    if (loadingIndicator) loadingIndicator.style.display = "none";
   }
 };
 
@@ -45,7 +53,7 @@ document.getElementById("imageUpload").addEventListener("change", event => {
 });
 
 // Classificar imagem
-document.getElementById("classifyBtn").addEventListener("click", async () => {
+classifyBtn.addEventListener("click", async () => {
   if (!preview.src || preview.src === "#") {
     labelContainer.innerHTML = "<p>Por favor, envie uma imagem primeiro.</p>";
     return;
