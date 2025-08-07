@@ -12,7 +12,7 @@
       <h2 class="fw-bold">🔬 Quiz Otoscópico</h2>
 
       <div class="d-flex justify-content-center my-3">
-  <select id="modo-selecao" class="form-select w-50" onchange="mudarModo(this.value)">
+<select id="modo-selecao" class="form-select w-50" onchange="mudarModo(this.value)">
     <option value="aleatorio" selected>🔀 Modo Aleatório</option>
     <option value="normal">🟢 Normal</option>
     <option value="otite_media_aguda">🔴 Otite Média Aguda</option>
@@ -22,6 +22,12 @@
     <option value="nao_otoscopica">⚠️ Não é imagem otoscópica</option>
   </select>
 </div>
+
+        <button
+          id="btn-revisao"
+          class="btn btn-outline-primary mb-2"
+          onclick="modoRevisaoErros()"
+        >📚 Revisar Erros</button>
 
       <p class="text-muted">Valide sua acurácia em diagnósticos otoscópicos</p>
     </div>
