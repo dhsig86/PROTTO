@@ -7,6 +7,7 @@ const metadataURL = useLocalModel ? "metadata.json" : `${onlineModelBase}metadat
 let model;
 let top1Prediction = null;
 let base64Image = null;
+let lastAdjustedResults = null;
 
 const labelContainer = document.getElementById("label-container");
 const preview = document.getElementById("preview");
@@ -193,13 +194,13 @@ document.getElementById("ajustarBtn").addEventListener("click", async () => {
   const predicoes = await model.predict(preview);
   const sintomasSelecionados = Array.from(document.querySelectorAll("#sintomas-form input:checked")).map(cb => cb.value);
   const resultadoAjustado = ajustarComSintomas(predicoes, sintomasSelecionados);
+  lastAdjustedResults = resultadoAjustado;
 
   const container = document.getElementById("ajuste-labels");
   container.innerHTML = "";
   resultadoAjustado.forEach(p => {
     const linha = document.createElement("p");
-    const slug = p.classe;
-    const friendly = classLabels[slug] || slug;
+    const friendly = classLabels[p.classe] || p.classe;
     linha.innerHTML = `${friendly} — <strong>${(p.ajustado * 100).toFixed(1)}%</strong>`;
     container.appendChild(linha);
   });
@@ -209,13 +210,22 @@ document.getElementById("ajustarBtn").addEventListener("click", async () => {
 
 // Exportar resultado ajustado
 document.getElementById("exportAjustadoBtn").addEventListener("click", () => {
-  const ajustadoTexto = document.getElementById("ajuste-labels").innerText;
+  if (!lastAdjustedResults) {
+    alert("⚠️ Recalcule com dados clínicos antes de exportar.");
+    return;
+  }
+
+  const friendlyResults = lastAdjustedResults.map(p => ({
+    classe: classLabels[p.classe] || p.classe,
+    ajustado: p.ajustado,
+  }));
+
   const filename = `ajuste_clinico_${new Date().toISOString().replace(/[:.]/g, "_")}.json`;
 
   const dados = {
     data: new Date().toISOString(),
     imagem_base64: base64Image,
-    resultado_ajustado: ajustadoTexto
+    resultado_ajustado: friendlyResults,
   };
 
   const blob = new Blob([JSON.stringify(dados, null, 2)], { type: "application/json" });
