@@ -34,12 +34,24 @@ const classeEstilo = {
 let modoSelecionado = "aleatorio";
 
 async function loadQuiz() {
-  const response = await fetch("quiz_cases.json");
-  cases = await response.json();
-  aplicarFiltroOuAleatorio(modoSelecionado);
-  currentIndex = 0;
-  score = 0;
-  loadCase(currentIndex);
+  try {
+    const response = await fetch("quiz_cases.json");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    cases = await response.json();
+    aplicarFiltroOuAleatorio(modoSelecionado);
+    currentIndex = 0;
+    score = 0;
+    loadCase(currentIndex);
+  } catch (error) {
+    const feedbackEl = document.getElementById("feedback");
+    if (feedbackEl) {
+      feedbackEl.innerText = "Erro ao carregar quiz.";
+      feedbackEl.classList.add("text-danger");
+    }
+    console.error("Erro ao carregar quiz:", error);
+  }
 }
 
 function aplicarFiltroOuAleatorio(modo = "aleatorio") {
