@@ -22,6 +22,26 @@ const classLabels = {
   nao_otoscopica: "Não é imagem otoscópica",
   normal: "Normal"
 };
+const semSintomasCheckbox = document.getElementById("sem_sintomas");
+const outrosSintomas = document.querySelectorAll("#sintomas-form input[type='checkbox']:not(#sem_sintomas)");
+if (semSintomasCheckbox) {
+  semSintomasCheckbox.addEventListener("change", () => {
+    if (semSintomasCheckbox.checked) {
+      outrosSintomas.forEach(cb => { cb.checked = false; cb.disabled = true; });
+    } else {
+      outrosSintomas.forEach(cb => cb.disabled = false);
+    }
+  });
+  outrosSintomas.forEach(cb => {
+    cb.addEventListener("change", () => {
+      if (cb.checked) {
+        semSintomasCheckbox.checked = false;
+        semSintomasCheckbox.dispatchEvent(new Event("change"));
+      }
+    });
+  });
+}
+
 
 
 classifyBtn.disabled = true;
@@ -185,6 +205,7 @@ document.getElementById("ajustarBtn").addEventListener("click", async () => {
 
   document.getElementById("ajuste-container").classList.remove("d-none");
   document.querySelectorAll("#sintomas-form input").forEach(cb => cb.checked = false);
+  if (semSintomasCheckbox) semSintomasCheckbox.dispatchEvent(new Event("change"));
 });
 
 // Exportar resultado ajustado
@@ -235,6 +256,7 @@ function reiniciar() {
   base64Image = null;
   document.getElementById("ajuste-labels").innerHTML = "";
   document.querySelectorAll("#sintomas-form input").forEach(cb => cb.checked = false);
+  if (semSintomasCheckbox) semSintomasCheckbox.dispatchEvent(new Event("change"));
 }
 
 // Cores para a barra de probabilidade
