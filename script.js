@@ -23,22 +23,27 @@ const classLabels = {
   normal: "Normal"
 };
 const semSintomasCheckbox = document.getElementById("sem_sintomas");
-const outrosSintomas = document.querySelectorAll("#sintomas-form input[type='checkbox']:not(#sem_sintomas)");
-if (semSintomasCheckbox) {
-  semSintomasCheckbox.addEventListener("change", () => {
-    if (semSintomasCheckbox.checked) {
-      outrosSintomas.forEach(cb => { cb.checked = false; cb.disabled = true; });
-    } else {
-      outrosSintomas.forEach(cb => cb.disabled = false);
-    }
-  });
-  outrosSintomas.forEach(cb => {
-    cb.addEventListener("change", () => {
-      if (cb.checked) {
-        semSintomasCheckbox.checked = false;
-        semSintomasCheckbox.dispatchEvent(new Event("change"));
+const outrosSintomas = document.querySelectorAll(
+  "#sintomas-form input[type='checkbox']:not(#sem_sintomas)"
+);
+const sintomasForm = document.getElementById("sintomas-form");
+
+if (sintomasForm && semSintomasCheckbox) {
+  sintomasForm.addEventListener("change", event => {
+    const alvo = event.target;
+    if (alvo === semSintomasCheckbox) {
+      if (semSintomasCheckbox.checked) {
+        outrosSintomas.forEach(cb => {
+          cb.checked = false;
+          cb.disabled = true;
+        });
+      } else {
+        outrosSintomas.forEach(cb => (cb.disabled = false));
       }
-    });
+    } else if (alvo.type === "checkbox" && alvo.checked) {
+      semSintomasCheckbox.checked = false;
+      outrosSintomas.forEach(cb => (cb.disabled = false));
+    }
   });
 }
 
@@ -190,7 +195,12 @@ document.getElementById("ajustarBtn").addEventListener("click", async () => {
   }
 
   const predicoes = await model.predict(preview);
-  const sintomasSelecionados = Array.from(document.querySelectorAll("#sintomas-form input:checked")).map(cb => cb.value);
+  let sintomasSelecionados = Array.from(
+    document.querySelectorAll("#sintomas-form input:checked")
+  ).map(cb => cb.value);
+  if (semSintomasCheckbox && semSintomasCheckbox.checked) {
+    sintomasSelecionados = [semSintomasCheckbox.value];
+  }
   const resultadoAjustado = ajustarComSintomas(predicoes, sintomasSelecionados);
   lastAdjustedResults = resultadoAjustado;
 
