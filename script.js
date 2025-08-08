@@ -14,14 +14,40 @@ const preview = document.getElementById("preview");
 const classifyBtn = document.getElementById("classifyBtn");
 const loadingIndicator = document.getElementById("loadingIndicator");
 
-const classLabels = {
-  otite_media_aguda: "Otite Média Aguda",
-  otite_media_cronica: "Otite Média Crônica",
-  otite_externa_aguda: "Otite Externa Aguda",
-  obstrucao: "Obstrução",
-  nao_otoscopica: "Não é imagem otoscópica",
-  normal: "Normal"
-};
+let classLabels = {};
+
+async function loadClassLabels() {
+  try {
+    const response = await fetch(metadataURL);
+    const data = await response.json();
+    if (Array.isArray(data.labels)) {
+      const map = {};
+      data.labels.forEach(label => {
+        const slug = label
+          .toLowerCase()
+          .normalize("NFD").replace(/[^\w\s-]/g, "")
+          .replace(/[\s-]+/g, "_");
+        map[slug] = label;
+      });
+      classLabels = map;
+    }
+  } catch (error) {
+    console.error("Erro ao carregar rótulos:", error);
+    throw error;
+  }
+}
+
+function populateCorrectionSelect() {
+  const select = document.getElementById("correctionSelect");
+  if (!select) return;
+  select.innerHTML = '<option value="">Escolher...</option>';
+  Object.entries(classLabels).forEach(([slug, label]) => {
+    const opt = document.createElement("option");
+    opt.value = slug;
+    opt.textContent = label;
+    select.appendChild(opt);
+  });
+}
 const semSintomasCheckbox = document.getElementById("sem_sintomas");
 const outrosSintomas = document.querySelectorAll(
   "#sintomas-form input[type='checkbox']:not(#sem_sintomas)"
@@ -55,12 +81,17 @@ classifyBtn.disabled = true;
 window.onload = async () => {
   if (loadingIndicator) loadingIndicator.style.display = "block";
   try {
-    model = await tmImage.load(modelURL, metadataURL);
-    console.log("✅ Modelo carregado com sucesso.");
+    const [loadedModel] = await Promise.all([
+      tmImage.load(modelURL, metadataURL),
+      loadClassLabels()
+    ]);
+    model = loadedModel;
+    populateCorrectionSelect();
+    console.log("✅ Modelo e rótulos carregados com sucesso.");
     classifyBtn.disabled = false;
   } catch (error) {
-    labelContainer.innerHTML = "❌ Erro ao carregar o modelo.";
-    console.error("Erro ao carregar o modelo:", error);
+    labelContainer.innerHTML = "❌ Erro ao carregar o modelo ou rótulos.";
+    console.error("Erro ao carregar:", error);
   } finally {
     if (loadingIndicator) loadingIndicator.style.display = "none";
   }
