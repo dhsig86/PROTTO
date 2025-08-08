@@ -1,6 +1,7 @@
 // ajuste_clinico.js
 
 const impactoSintomas = {
+  sem_sintomas: { otite_media_aguda: -0.20, otite_media_cronica: -0.20, otite_externa_aguda: -0.20, obstrucao: -0.20, normal: 0.20 },
   febre: { otite_media_aguda: 0.25, otite_media_cronica: -0.15, otite_externa_aguda: -0.10, obstrucao: -0.05, normal: -0.10 },
   otalgia: { otite_media_aguda: 0.20, otite_media_cronica: -0.20, otite_externa_aguda: 0.30, obstrucao: 0.10, normal: -0.20 },
   otalgia_tracao: { otite_media_aguda: -0.25, otite_media_cronica: -0.20, otite_externa_aguda: 0.30, obstrucao: -0.10, normal: -0.20 },
@@ -29,7 +30,10 @@ window.ajustarComSintomas = function (predicoes, sintomasSelecionados) {
     "otite externa": "otite_externa_aguda",
     "obstrução": "obstrucao",
     "obstrucao": "obstrucao",
-    "normal": "normal"
+    "normal": "normal",
+      "sem sintomas": "sem_sintomas",
+      "ausencia de sintomas": "sem_sintomas",
+      "ausência de sintomas": "sem_sintomas"
   };
 
   sintomasSelecionados.forEach(sintoma => {
