@@ -17,7 +17,7 @@ const impactoSintomas = {
   tosse: { obstrucao: 0.05 }
 };
 
-window.ajustarComSintomas = function (predicoes, sintomasSelecionados) {
+function ajustarComSintomas(predicoes, sintomasSelecionados) {
   const ajustes = {};
   const aliases = {
     "não é imagem otoscópica": "nao_otoscopica",
@@ -61,3 +61,8 @@ window.ajustarComSintomas = function (predicoes, sintomasSelecionados) {
     ajustado: +(p.bruto / somaBruto).toFixed(4)
   }));
 };
+
+window.ajustarComSintomas = ajustarComSintomas;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { ajustarComSintomas };
+}
