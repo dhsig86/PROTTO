@@ -163,17 +163,40 @@ function exportarFeedbacks() {
   a.click();
 }
 
-function modoRevisaoErros() {
+async function modoRevisaoErros() {
   const historico = JSON.parse(localStorage.getItem("feedbacks") || "[]");
   if (!historico.length) {
     alert("Nenhum erro encontrado nos feedbacks anteriores.");
     return;
   }
 
-  // pega apenas os erros
-  const erros = historico.filter(e => e.user_answer !== e.real_label);
+  // agrupa por filename e mantém o registro mais recente
+  const agrupado = {};
+  historico.forEach(registro => {
+    const existente = agrupado[registro.filename];
+    if (!existente || new Date(registro.timestamp) > new Date(existente.timestamp)) {
+      agrupado[registro.filename] = registro;
+    }
+  });
+  const recentes = Object.values(agrupado);
+
+  // pega apenas os erros na tentativa mais recente
+  const erros = recentes.filter(r => r.user_answer !== r.real_label);
   if (!erros.length) {
     alert("Todos os casos anteriores estavam corretos! Parabéns!");
+    return;
+  }
+
+  // recarrega todos os casos antes de filtrar
+  try {
+    const response = await fetch("quiz_cases.json");
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    cases = await response.json();
+  } catch (error) {
+    console.error("Erro ao recarregar quiz:", error);
+    alert("Erro ao carregar casos para revisão.");
     return;
   }
 
