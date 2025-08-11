@@ -236,3 +236,9 @@ button.btn-lg, .btn-lg {
     font-size: 1rem;
   }
 }
+
+/* ---------- QUIZ OPTION FOCUS ---------- */
+#options .option-btn:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.5);
+  outline: none;
+}

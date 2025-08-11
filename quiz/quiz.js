@@ -112,12 +112,13 @@ function loadCase(index) {
   const container = document.getElementById("options");
   container.innerHTML = "";
 
-  labels.forEach(label => {
+  labels.forEach((label, idx) => {
     const btn = document.createElement("button");
     btn.className = `btn btn-outline-${classeEstilo[label]} mb-2 option-btn`;
     btn.dataset.label = label;
     btn.innerText = labelNames[label] || label;
     btn.onclick = () => validateAnswer(label, caso);
+    btn.tabIndex = idx + 1;
     container.appendChild(btn);
   });
 
@@ -131,6 +132,21 @@ function loadCase(index) {
     progressBar.setAttribute("aria-valuenow", percent);
   }
 }
+
+function handleKeyup(event) {
+  const options = document.querySelectorAll('#options .option-btn');
+  const num = parseInt(event.key, 10);
+  if (num >= 1 && num <= options.length) {
+    options[num - 1].click();
+  } else if (event.key === 'Enter') {
+    const focused = document.activeElement;
+    if (focused && focused.classList.contains('option-btn')) {
+      focused.click();
+    }
+  }
+}
+
+document.addEventListener('keyup', handleKeyup);
 
 function validateAnswer(resposta, caso) {
   const certo = resposta === caso.true_label;
