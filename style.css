@@ -80,6 +80,13 @@ h1, .card-title {
   display: block;
 }
 
+/* ---------- QUIZ IMAGE ---------- */
+.quiz-img {
+  max-height: 250px;
+  width: 100%;
+  object-fit: contain;
+}
+
 /* ---------- CARD GERAL ---------- */
 .card {
   border-radius: 16px;
