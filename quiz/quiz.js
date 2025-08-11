@@ -109,7 +109,8 @@ function loadCase(index) {
 
   labels.forEach(label => {
     const btn = document.createElement("button");
-    btn.className = `btn btn-outline-${classeEstilo[label]} mb-2`;
+    btn.className = `btn btn-outline-${classeEstilo[label]} mb-2 option-btn`;
+    btn.dataset.label = label;
     btn.innerText = labelNames[label] || label;
     btn.onclick = () => validateAnswer(label, caso);
     container.appendChild(btn);
@@ -117,11 +118,32 @@ function loadCase(index) {
 
   document.getElementById("feedback").innerText = "";
   document.getElementById("progresso").innerText = `Caso ${index + 1} de ${cases.length}`;
+
+  const progressBar = document.getElementById("progress-bar");
+  if (progressBar) {
+    const percent = (index / cases.length) * 100;
+    progressBar.style.width = `${percent}%`;
+    progressBar.setAttribute("aria-valuenow", percent);
+  }
 }
 
 function validateAnswer(resposta, caso) {
   const certo = resposta === caso.true_label;
   if (certo) score++;
+
+  const buttons = document.querySelectorAll("#options .option-btn");
+  buttons.forEach(btn => {
+    btn.disabled = true;
+    const lbl = btn.dataset.label;
+    btn.className = `btn mb-2 option-btn`;
+    if (lbl === caso.true_label) {
+      btn.classList.add("btn-success");
+    } else if (lbl === resposta) {
+      btn.classList.add("btn-danger");
+    } else {
+      btn.classList.add(`btn-outline-${classeEstilo[lbl]}`);
+    }
+  });
 
   const feedback = certo
     ? "✅ Correto!"
@@ -135,6 +157,11 @@ function validateAnswer(resposta, caso) {
     if (currentIndex < cases.length) {
       loadCase(currentIndex);
     } else {
+      const progressBar = document.getElementById("progress-bar");
+      if (progressBar) {
+        progressBar.style.width = "100%";
+        progressBar.setAttribute("aria-valuenow", 100);
+      }
       alert(`🎉 Fim do quiz! Você acertou ${score} de ${cases.length}.`);
     }
   }, 2000);
