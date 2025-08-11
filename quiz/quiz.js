@@ -104,6 +104,11 @@ function loadCase(index) {
   const caso = cases[index];
   document.getElementById("quiz-image").src = "data:image/jpeg;base64," + caso.img_base64;
 
+  const nextBtn = document.getElementById("next-btn");
+  if (nextBtn) nextBtn.style.display = "none";
+  const summary = document.getElementById("summary");
+  if (summary) summary.innerText = "";
+
   const container = document.getElementById("options");
   container.innerHTML = "";
 
@@ -152,19 +157,27 @@ function validateAnswer(resposta, caso) {
 
   saveFeedback(caso.filename, caso.predicted, resposta, caso.true_label);
 
-  setTimeout(() => {
-    currentIndex++;
-    if (currentIndex < cases.length) {
-      loadCase(currentIndex);
-    } else {
-      const progressBar = document.getElementById("progress-bar");
-      if (progressBar) {
-        progressBar.style.width = "100%";
-        progressBar.setAttribute("aria-valuenow", 100);
-      }
-      alert(`🎉 Fim do quiz! Você acertou ${score} de ${cases.length}.`);
+  const nextBtn = document.getElementById("next-btn");
+  if (nextBtn) nextBtn.style.display = "block";
+}
+
+function nextCase() {
+  currentIndex++;
+  if (currentIndex < cases.length) {
+    loadCase(currentIndex);
+  } else {
+    const progressBar = document.getElementById("progress-bar");
+    if (progressBar) {
+      progressBar.style.width = "100%";
+      progressBar.setAttribute("aria-valuenow", 100);
     }
-  }, 2000);
+    const summary = document.getElementById("summary");
+    if (summary) {
+      summary.innerText = `🎉 Fim do quiz! Você acertou ${score} de ${cases.length}.`;
+    }
+    const nextBtn = document.getElementById("next-btn");
+    if (nextBtn) nextBtn.style.display = "none";
+  }
 }
 
 function saveFeedback(nome, predicted, resposta, real) {
