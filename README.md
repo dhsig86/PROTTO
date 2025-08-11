@@ -58,3 +58,14 @@ A página principal (`index.html`) é composta por:
 3. Clique em **Classificar Imagem** para que o modelo processe a foto.
 4. Consulte o resultado com as probabilidades no cartão central.
 5. Opcionalmente utilize **Imprimir Resultado** para gerar um PDF/impresso ou **Reset** para limpar a tela.
+
+## 🧪 Testes
+
+Este projeto utiliza [Jest](https://jestjs.io/) para testes unitários e de integração.
+
+Para instalar as dependências e executar a suíte de testes, utilize:
+
+```bash
+npm install
+npm test
+```

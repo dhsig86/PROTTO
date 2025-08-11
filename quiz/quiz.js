@@ -189,3 +189,7 @@ window.onload = async () => {
   await carregarClasses();
   await loadQuiz();
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { saveFeedback, modoRevisaoErros };
+}

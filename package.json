@@ -1,0 +1,20 @@
+{
+  "name": "protto",
+  "version": "1.0.0",
+  "description": "This folder contains a simple HTML page that allows you to load a TensorFlow.js model and run predictions on otoscopic images in the browser.",
+  "main": "ajuste_clinico.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "jest": "^30.0.5",
+    "jest-environment-jsdom": "^30.0.5"
+  },
+  "jest": {
+    "testEnvironment": "jsdom"
+  }
+}

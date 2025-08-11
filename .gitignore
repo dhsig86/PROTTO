@@ -141,3 +141,6 @@ frontend_web/model_tfjs/
 
 modelo_retreinado/*.keras
 modelo_retreinado/**/*.h5
+
+# Node dependencies
+node_modules/
