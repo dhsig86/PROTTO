@@ -14,7 +14,7 @@
         <h2 class="fw-bold">🔬 Quiz Otoscópico</h2>
 
         <div class="d-flex justify-content-center my-3">
-          <select id="modo-selecao" class="form-select w-50" onchange="mudarModo(this.value)">
+          <select id="modo-selecao" class="form-select w-50" onchange="quizGame.mudarModo(this.value)">
             <option value="aleatorio" selected>🔀 Modo Aleatório</option>
           </select>
         </div>
@@ -22,7 +22,7 @@
         <button
           id="btn-revisao"
           class="btn btn-outline-primary mb-2"
-          onclick="modoRevisaoErros()"
+          onclick="quizGame.modoRevisaoErros()"
         >📚 Revisar Erros</button>
 
         <p class="text-muted">Valide sua acurácia em diagnósticos otoscópicos</p>
@@ -57,10 +57,10 @@
             <p id="summary" class="fw-bold fs-5"></p>
           </div>
 
-          <button id="next-btn" class="btn btn-primary w-100 my-2" style="display: none;" onclick="nextCase()">Próximo</button>
+          <button id="next-btn" class="btn btn-primary w-100 my-2" style="display: none;" onclick="quizGame.nextCase()">Próximo</button>
 
           <div class="d-flex justify-content-between">
-            <button class="btn btn-outline-success w-50 me-2" onclick="exportarFeedbacks()">📤 Exportar Feedbacks</button>
+            <button class="btn btn-outline-success w-50 me-2" onclick="quizGame.exportarFeedbacks()">📤 Exportar Feedbacks</button>
             <button class="btn btn-outline-secondary w-50" onclick="window.location.reload()">🔁 Reiniciar Quiz</button>
           </div>
         </div>
