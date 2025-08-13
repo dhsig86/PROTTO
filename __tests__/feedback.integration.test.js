@@ -1,14 +1,17 @@
-const { saveFeedback, modoRevisaoErros } = require('../quiz/quiz.js');
+const QuizGame = require('../quiz/quiz.js');
 
 describe('fluxo de feedback', () => {
+  let game;
+
   beforeEach(() => {
     localStorage.clear();
     jest.restoreAllMocks();
+    game = new QuizGame();
   });
 
   test('saveFeedback registra dados no localStorage', () => {
     const spy = jest.spyOn(Storage.prototype, 'setItem');
-    saveFeedback('img.png', 'pred', 'resp', 'real');
+    game.saveFeedback('img.png', 'pred', 'resp', 'real');
     expect(spy).toHaveBeenCalled();
     const historico = JSON.parse(localStorage.getItem('feedbacks'));
     expect(historico).toHaveLength(1);
@@ -30,7 +33,7 @@ describe('fluxo de feedback', () => {
     };
     localStorage.setItem('feedbacks', JSON.stringify([registro]));
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
-    modoRevisaoErros();
+    game.modoRevisaoErros();
     expect(alertSpy).toHaveBeenCalledWith('Todos os casos anteriores estavam corretos! Parabéns!');
   });
 });
